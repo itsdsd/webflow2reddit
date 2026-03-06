@@ -16,17 +16,15 @@ jobs:
       - name: Install dependencies
         run: npm install
       - name: Build Mac
-        run: npm run build-mac
+        run: npx electron-builder --mac --publish never
         env:
           CSC_IDENTITY_AUTO_DISCOVERY: false
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Upload Mac DMG
         uses: softprops/action-gh-release@v1
         if: github.event_name == 'release'
         with:
           files: dist/*.dmg
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.GITHUB_TOKEN }}
 
   build-windows:
     runs-on: windows-latest
@@ -38,13 +36,10 @@ jobs:
       - name: Install dependencies
         run: npm install
       - name: Build Windows
-        run: npm run build-win
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: npx electron-builder --win --publish never
       - name: Upload Windows EXE
         uses: softprops/action-gh-release@v1
         if: github.event_name == 'release'
         with:
           files: dist/*.exe
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.GITHUB_TOKEN }}
