@@ -1,6 +1,6 @@
 {
   "name": "webflow2reddit",
-  "version": "1.0.0",
+  "version": "1.2.0",
   "description": "Publish any Webflow CMS content to Reddit",
   "main": "src/main.js",
   "scripts": {
@@ -14,13 +14,14 @@
     "directories": {
       "output": "dist"
     },
+    "files": [
+      "src/**/*"
+    ],
     "win": {
-      "target": "nsis",
-      "icon": "assets/icon.ico"
+      "target": "nsis"
     },
     "mac": {
-      "target": "dmg",
-      "icon": "assets/icon.icns"
+      "target": "dmg"
     }
   },
   "devDependencies": {
@@ -28,7 +29,6 @@
     "electron-builder": "^24.0.0"
   },
   "dependencies": {
-    "node-fetch": "^2.7.0",
-    "keytar": "^7.9.0"
+    "node-fetch": "^2.7.0"
   }
 }
