@@ -11,18 +11,10 @@
   "build": {
     "appId": "com.webflow2reddit.app",
     "productName": "Webflow2Reddit",
-    "directories": {
-      "output": "dist"
-    },
-    "files": [
-      "src/**/*"
-    ],
-    "win": {
-      "target": "nsis"
-    },
-    "mac": {
-      "target": "dmg"
-    }
+    "directories": { "output": "dist" },
+    "files": ["src/**/*", "assets/W2R.png"],
+    "win": { "target": "nsis", "icon": "assets/icon.ico" },
+    "mac": { "target": "dmg", "icon": "assets/icon.icns" }
   },
   "devDependencies": {
     "electron": "^28.0.0",
