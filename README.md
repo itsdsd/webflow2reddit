@@ -14,6 +14,12 @@ A desktop app for Mac and Windows. Fetch any Webflow CMS item, generate an AI su
 
 <p align="center">You can download the <strong>.dmg</strong> file for Mac or <strong>.exe</strong> version for Windows to install the desktop version of the app.</p>
 
+> ⚠️ **Mac users:** If you see *"app is damaged and can't be opened"*, open Terminal and run:
+> ```
+> xattr -cr /Applications/Webflow2Reddit.app
+> ```
+> This is a standard Mac security warning for apps without an Apple certificate — the app is safe.
+
 ---
 
 ## Download & Install
