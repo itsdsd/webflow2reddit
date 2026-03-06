@@ -3,7 +3,7 @@
 A desktop app for Windows and Mac. Fetches any Webflow CMS collection, generates an AI summary, and posts it to Reddit — all in a few clicks. I hope this helps.
 
 ---
-### Install the desktop version of the app or do this manually? 
+### You can download the .dmg file for mac or .exe version for windows to install the desktop version of the app.
 
 ## First-Time Setup (do this once)
 
