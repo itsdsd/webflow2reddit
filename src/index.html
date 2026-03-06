@@ -7,124 +7,92 @@
 <style>
 :root {
   --font: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
-  --font-display: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
-  --bg: #0e0e0e;
-  --surface: #181818;
-  --surface2: #212121;
-  --border: #2c2c2c;
-  --accent: #ff4500;
-  --blue: #3b9eff;
-  --text: #efefef;
-  --muted: #585858;
-  --success: #22c55e;
-  --warn: #f59e0b;
-  --radius: 9px;
-  --shadow: 0 1px 4px rgba(0,0,0,0.35);
+  --accent: #e8460a; --blue: #6366f1;
+  --success: #22c55e; --warn: #f59e0b;
+  --radius: 14px;
+  --text: #1a0f18; --muted: #7a6575;
+  --glass: rgba(255,255,255,0.52);
+  --glass2: rgba(255,255,255,0.32);
+  --glass-sidebar: rgba(255,255,255,0.42);
+  --border: rgba(255,255,255,0.65);
+  --border2: rgba(160,130,150,0.2);
+  --shadow: 0 8px 32px rgba(80,30,60,0.14);
+  --input-bg: rgba(255,255,255,0.45);
 }
-html.light {
-  --bg: #f4f3f1;
-  --surface: #ffffff;
-  --surface2: #eeede9;
-  --border: #dddbd6;
-  --text: #1c1b18;
-  --muted: #9c9a94;
-  --shadow: 0 1px 4px rgba(0,0,0,0.07);
+html.dark {
+  --text: #f0eaf0; --muted: #9a8898;
+  --glass: rgba(28,14,26,0.58);
+  --glass2: rgba(28,14,26,0.38);
+  --glass-sidebar: rgba(18,8,18,0.62);
+  --border: rgba(255,255,255,0.09);
+  --border2: rgba(255,255,255,0.06);
+  --shadow: 0 8px 32px rgba(0,0,0,0.5);
+  --input-bg: rgba(0,0,0,0.22);
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html,body{height:100%;overflow:hidden}
 body{
-  background:var(--bg);color:var(--text);
-  font-family:var(--font);
-  font-size:14px;line-height:1.5;
+  background:url('bg.jpg') center/cover no-repeat fixed;
+  color:var(--text);font-family:var(--font);font-size:14px;line-height:1.5;
   display:flex;flex-direction:column;
-  -webkit-font-smoothing:antialiased;
-  user-select:none;
-  transition:background 0.18s,color 0.18s;
+  -webkit-font-smoothing:antialiased;user-select:none;
 }
 
 /* TITLEBAR */
-.titlebar{
-  height:44px;background:var(--surface);
-  border-bottom:1px solid var(--border);
-  display:flex;align-items:center;padding:0 16px;
-  -webkit-app-region:drag;flex-shrink:0;
-  transition:background 0.18s,border-color 0.18s;
-}
-.titlebar-title{
-  font-family:var(--font-display);font-size:0.72rem;font-weight:800;
-  letter-spacing:0.16em;text-transform:uppercase;
-  display:flex;align-items:center;gap:8px;
-  flex:1;justify-content:center;
-}
+.titlebar{height:46px;background:var(--glass);backdrop-filter:blur(24px) saturate(2);-webkit-backdrop-filter:blur(24px) saturate(2);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 18px;-webkit-app-region:drag;flex-shrink:0;}
+.titlebar-title{font-size:0.7rem;font-weight:800;letter-spacing:0.18em;text-transform:uppercase;display:flex;align-items:center;gap:8px;flex:1;justify-content:center;color:var(--text);}
 .dot{width:7px;height:7px;background:var(--accent);border-radius:50%;animation:pulse 2.5s infinite;flex-shrink:0;}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.3}}
-.theme-btn{
-  -webkit-app-region:no-drag;
-  background:none;border:1px solid var(--border);border-radius:8px;
-  padding:5px 10px;font-size:1rem;line-height:1;
-  cursor:pointer;transition:all 0.15s;width:36px;height:28px;
-  display:flex;align-items:center;justify-content:center;
-  pointer-events:all;
-  position:relative;
-  z-index:10;
-}
-.theme-btn *{ -webkit-app-region:no-drag; pointer-events:none; }
-.theme-btn:hover{border-color:var(--text);}
+
+/* THEME TOGGLE */
+.theme-toggle{-webkit-app-region:no-drag;position:relative;width:35px;height:18px;cursor:pointer;flex-shrink:0;}
+.tt-track{position:absolute;inset:0;border-radius:20px;background:rgba(255,230,140,0.22);border:1px solid rgba(255,210,80,0.3);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);transition:background 0.4s,border-color 0.4s;overflow:hidden;}
+html.dark .tt-track{background:rgba(60,30,100,0.35);border-color:rgba(160,120,255,0.25);}
+.tt-star{position:absolute;border-radius:50%;background:#fff;transition:opacity 0.4s;}
+.tt-star1{width:1.5px;height:1.5px;top:4px;right:6px;opacity:0;}
+.tt-star2{width:1px;height:1px;top:9px;right:10px;opacity:0;}
+.tt-star3{width:1px;height:1px;top:5px;right:4px;opacity:0;}
+html.dark .tt-star1{opacity:0.9;}
+html.dark .tt-star2{opacity:0.65;}
+html.dark .tt-star3{opacity:1;}
+.tt-thumb{position:absolute;top:2px;left:2px;width:13px;height:13px;border-radius:50%;transition:transform 0.4s cubic-bezier(0.34,1.56,0.64,1),background 0.4s,box-shadow 0.4s;background:linear-gradient(145deg,#ffe566,#ffb020);box-shadow:0 1px 5px rgba(255,160,20,0.55),inset 0 1px 0 rgba(255,255,255,0.5);display:flex;align-items:center;justify-content:center;}
+html.dark .tt-thumb{transform:translateX(17px);background:linear-gradient(145deg,#d0c0ff,#8060cc);box-shadow:0 1px 5px rgba(130,80,230,0.5),inset 0 1px 0 rgba(255,255,255,0.2);}
+.tt-icon{position:absolute;display:flex;align-items:center;justify-content:center;transition:opacity 0.22s,transform 0.35s;pointer-events:none;}
+.tt-sun{opacity:1;transform:scale(1) rotate(0deg);}
+.tt-moon{opacity:0;transform:scale(0.4) rotate(-40deg);}
+html.dark .tt-sun{opacity:0;transform:scale(0.4) rotate(40deg);}
+html.dark .tt-moon{opacity:1;transform:scale(1) rotate(0deg);}
 
 /* LAYOUT */
 .app{display:flex;flex:1;overflow:hidden;}
 
 /* SIDEBAR */
-.sidebar{
-  width:196px;flex-shrink:0;
-  background:var(--surface);border-right:1px solid var(--border);
-  display:flex;flex-direction:column;padding:14px 0;
-  transition:background 0.18s,border-color 0.18s;
-}
-.sidebar-label{
-  font-size:0.62rem;font-weight:700;letter-spacing:0.1em;
-  text-transform:uppercase;color:var(--muted);
-  padding:0 16px;margin:14px 0 4px;
-}
+.sidebar{width:200px;flex-shrink:0;background:var(--glass-sidebar);backdrop-filter:blur(28px) saturate(2);-webkit-backdrop-filter:blur(28px) saturate(2);border-right:1px solid var(--border);display:flex;flex-direction:column;padding:14px 0;}
+.sidebar-label{font-size:0.6rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted);padding:0 16px;margin:16px 0 4px;opacity:0.8;}
 .sidebar-label:first-child{margin-top:0;}
-.nav-item{
-  display:flex;align-items:center;gap:9px;
-  padding:9px 16px;font-size:0.84rem;font-weight:500;color:var(--muted);
-  cursor:pointer;border-left:2px solid transparent;transition:all 0.13s;
-  -webkit-app-region:no-drag;
-}
-.nav-item:hover{color:var(--text);background:rgba(128,128,128,0.07);}
-.nav-item.active{color:var(--text);border-left-color:var(--accent);background:rgba(255,69,0,0.07);}
+.nav-item{display:flex;align-items:center;gap:9px;padding:9px 16px;font-size:0.84rem;font-weight:500;color:var(--muted);cursor:pointer;border-left:2px solid transparent;transition:all 0.15s;-webkit-app-region:no-drag;}
+.nav-item:hover{color:var(--text);background:rgba(255,255,255,0.18);}
+.nav-item.active{color:var(--text);border-left-color:var(--accent);background:rgba(255,255,255,0.22);font-weight:600;}
 .nav-icon{font-size:0.9rem;width:18px;text-align:center;flex-shrink:0;}
+.nav-badge{margin-left:auto;background:var(--accent);color:#fff;font-size:0.6rem;font-weight:700;padding:1px 5px;border-radius:10px;min-width:16px;text-align:center;}
 .sidebar-bottom{margin-top:auto;padding:12px 14px;border-top:1px solid var(--border);}
-.creds-badge{
-  font-size:0.7rem;font-weight:600;padding:5px 10px;border-radius:20px;
-  border:1px solid var(--border);color:var(--muted);text-align:center;margin-bottom:8px;
-}
+.creds-badge{font-size:0.7rem;font-weight:600;padding:5px 10px;border-radius:20px;border:1px solid var(--border2);color:var(--muted);text-align:center;margin-bottom:8px;background:var(--glass2);}
 .creds-badge.ok{border-color:var(--success);color:var(--success);}
 
 /* CONTENT */
-.content{flex:1;overflow-y:auto;padding:28px 30px 40px;}
+.content{flex:1;overflow-y:auto;padding:26px 28px 40px;}
 .content::-webkit-scrollbar{width:4px;}
-.content::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px;}
+.content::-webkit-scrollbar-thumb{background:rgba(160,120,140,0.25);border-radius:4px;}
 
 /* PANELS */
-.panel{display:none;animation:fadeIn 0.2s ease;}
+.panel{display:none;animation:fadeIn 0.22s ease;}
 .panel.active{display:block;}
-@keyframes fadeIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
-
-.page-title{
-  font-family:var(--font-display);font-size:1.45rem;font-weight:800;
-  letter-spacing:-0.02em;margin-bottom:4px;
-}
-.page-sub{font-size:0.82rem;color:var(--muted);margin-bottom:22px;line-height:1.6;font-weight:400;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.page-title{font-size:1.5rem;font-weight:800;letter-spacing:-0.02em;margin-bottom:4px;}
+.page-sub{font-size:0.82rem;color:var(--muted);margin-bottom:22px;line-height:1.6;}
 
 /* CARD */
-.card{
-  background:var(--surface);border:1px solid var(--border);
-  border-radius:var(--radius);padding:18px 20px;margin-bottom:14px;
-  box-shadow:var(--shadow);transition:background 0.18s,border-color 0.18s;
-}
+.card{background:var(--glass);backdrop-filter:blur(20px) saturate(1.8);-webkit-backdrop-filter:blur(20px) saturate(1.8);border:1px solid var(--border);border-radius:var(--radius);padding:18px 20px;margin-bottom:14px;box-shadow:var(--shadow);}
 .card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
 .card-label{font-size:0.68rem;font-weight:700;text-transform:uppercase;letter-spacing:0.09em;color:var(--muted);}
 .card-label em{color:var(--text);font-style:normal;}
@@ -133,120 +101,135 @@ body{
 .field{margin-bottom:13px;}
 .field:last-child{margin-bottom:0;}
 label{display:block;font-size:0.74rem;font-weight:600;color:var(--muted);margin-bottom:5px;}
-input,textarea,select{
-  width:100%;background:var(--bg);border:1px solid var(--border);border-radius:6px;
-  color:var(--text);font-family:var(--font);font-size:0.85rem;font-weight:400;
-  padding:8px 11px;outline:none;transition:border-color 0.14s,background 0.18s;
-}
-input:focus,textarea:focus,select:focus{border-color:var(--blue);}
-input::placeholder,textarea::placeholder{color:var(--muted);font-weight:400;}
+input,textarea,select{width:100%;background:var(--input-bg);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:var(--font);font-size:0.85rem;padding:8px 11px;outline:none;transition:border-color 0.14s,box-shadow 0.14s;}
+input:focus,textarea:focus,select:focus{border-color:#8b6fa8;box-shadow:0 0 0 3px rgba(139,111,168,0.15);}
+input::placeholder,textarea::placeholder{color:var(--muted);}
 input[type=password]{letter-spacing:0.06em;}
-textarea{resize:vertical;min-height:88px;line-height:1.6;}
+textarea{resize:vertical;min-height:88px;line-height:1.6;font-family:var(--font);}
+select option{background:#1a0f18;color:#f0eaf0;}
 .two-col{display:grid;grid-template-columns:1fr 1fr;gap:13px;}
-.hint{font-size:0.72rem;color:var(--muted);margin-top:4px;line-height:1.5;font-weight:400;}
-.hint code{background:var(--surface2);padding:1px 5px;border-radius:3px;color:var(--blue);font-size:0.7rem;}
+.hint{font-size:0.72rem;color:var(--muted);margin-top:4px;line-height:1.5;}
+.hint code{background:var(--glass2);padding:1px 5px;border-radius:3px;color:var(--blue);font-size:0.7rem;}
 
 /* BUTTONS */
-.btn{
-  padding:8px 16px;border-radius:6px;border:none;
-  font-family:var(--font);font-size:0.82rem;font-weight:600;
-  cursor:pointer;letter-spacing:0.01em;transition:all 0.12s;
-  display:inline-flex;align-items:center;gap:6px;
-  -webkit-app-region:no-drag;
-}
-.btn:disabled{opacity:0.35;cursor:not-allowed;transform:none!important;}
-.btn-primary{background:var(--accent);color:#fff;}
-.btn-primary:hover:not(:disabled){background:#e03e00;transform:translateY(-1px);}
-.btn-blue{background:var(--blue);color:#fff;}
-.btn-blue:hover:not(:disabled){background:#2a8ef5;transform:translateY(-1px);}
-.btn-ghost{background:transparent;color:var(--muted);border:1px solid var(--border);}
-.btn-ghost:hover:not(:disabled){color:var(--text);border-color:var(--text);}
-.btn-danger{background:transparent;color:#ef4444;border:1px solid rgba(239,68,68,0.25);}
-.btn-danger:hover:not(:disabled){background:rgba(239,68,68,0.06);border-color:#ef4444;}
-.btn-success{background:var(--success);color:#000;font-weight:700;}
-.btn-success:hover:not(:disabled){background:#16a34a;}
+.btn{padding:8px 16px;border-radius:8px;border:none;font-family:var(--font);font-size:0.82rem;font-weight:600;cursor:pointer;transition:all 0.14s;display:inline-flex;align-items:center;gap:6px;-webkit-app-region:no-drag;letter-spacing:0.01em;}
+.btn:disabled{opacity:0.4;cursor:not-allowed;transform:none!important;}
+.btn-primary{background:var(--accent);color:#fff;box-shadow:0 2px 14px rgba(232,70,10,0.32);}
+.btn-primary:hover:not(:disabled){background:#d03c06;transform:translateY(-1px);box-shadow:0 4px 18px rgba(232,70,10,0.42);}
+.btn-blue{background:#8b6fa8;color:#fff;box-shadow:0 2px 14px rgba(139,111,168,0.3);}
+.btn-blue:hover:not(:disabled){background:#7a5e97;transform:translateY(-1px);}
+.btn-ghost{background:var(--glass2);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);color:var(--muted);border:1px solid var(--border);}
+.btn-ghost:hover:not(:disabled){color:var(--text);background:var(--glass);}
+.btn-danger{background:transparent;color:#ef4444;border:1px solid rgba(239,68,68,0.3);}
+.btn-danger:hover:not(:disabled){background:rgba(239,68,68,0.1);border-color:#ef4444;}
+.btn-success{background:var(--success);color:#000;font-weight:700;box-shadow:0 2px 14px rgba(34,197,94,0.28);}
+.btn-success:hover:not(:disabled){background:#16a34a;transform:translateY(-1px);}
+.btn-warn{background:#c9a84c;color:#fff;font-weight:700;}
+.btn-warn:hover:not(:disabled){background:#b8962e;transform:translateY(-1px);}
 .btn-sm{padding:5px 11px;font-size:0.74rem;}
-.btn-row{display:flex;gap:10px;margin-top:20px;align-items:center;}
+.btn-row{display:flex;gap:10px;margin-top:20px;align-items:center;flex-wrap:wrap;}
 
 /* ITEM LIST */
 .item-list{display:flex;flex-direction:column;gap:7px;}
-.item-row{
-  background:var(--bg);border:1px solid var(--border);
-  border-radius:7px;padding:11px 13px;
-  display:flex;align-items:center;gap:11px;
-  cursor:pointer;transition:all 0.12s;-webkit-app-region:no-drag;
-}
-.item-row:hover{border-color:var(--blue);}
-.item-row.selected{border-color:var(--accent);background:rgba(255,69,0,0.05);}
-.item-thumb{width:56px;height:38px;border-radius:4px;object-fit:cover;flex-shrink:0;border:1px solid var(--border);background:var(--surface2);}
-.item-thumb-empty{width:56px;height:38px;border-radius:4px;background:var(--surface2);border:1px solid var(--border);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:1rem;}
+.item-row{background:var(--glass2);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border:1px solid var(--border);border-radius:10px;padding:11px 13px;display:flex;align-items:center;gap:11px;cursor:pointer;transition:all 0.14s;-webkit-app-region:no-drag;}
+.item-row:hover{background:var(--glass);border-color:rgba(99,102,241,0.5);}
+.item-row.selected{border-color:var(--accent);background:rgba(232,70,10,0.1);}
+.item-thumb{width:56px;height:38px;border-radius:6px;object-fit:cover;flex-shrink:0;border:1px solid var(--border);}
+.item-thumb-empty{width:56px;height:38px;border-radius:6px;background:var(--glass2);border:1px solid var(--border);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:1rem;}
 .item-info{flex:1;min-width:0;}
 .item-name{font-size:0.85rem;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:2px;}
-.item-meta{font-size:0.7rem;color:var(--muted);font-weight:400;}
-.item-check{width:18px;height:18px;border-radius:50%;border:1.5px solid var(--border);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:0.6rem;transition:all 0.12s;}
+.item-meta{font-size:0.7rem;color:var(--muted);}
+.item-check{width:20px;height:20px;border-radius:5px;border:1.5px solid var(--border);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:0.65rem;transition:all 0.12s;background:var(--glass2);}
 .item-row.selected .item-check{background:var(--accent);border-color:var(--accent);color:#fff;}
+
+/* BATCH QUEUE */
+.queue-list{display:flex;flex-direction:column;gap:10px;}
+.queue-item{background:var(--glass2);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1px solid var(--border);border-radius:12px;overflow:hidden;transition:border-color 0.12s;}
+.queue-item.generating{border-color:var(--blue);}
+.queue-item.ready{border-color:var(--success);}
+.queue-item.published{opacity:0.55;}
+.queue-header{display:flex;align-items:center;gap:10px;padding:11px 14px;cursor:pointer;-webkit-app-region:no-drag;}
+.queue-thumb{width:44px;height:30px;border-radius:4px;object-fit:cover;flex-shrink:0;background:var(--glass2);}
+.queue-name{font-size:0.84rem;font-weight:600;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.queue-status{font-size:0.7rem;font-weight:600;padding:2px 8px;border-radius:10px;flex-shrink:0;}
+.queue-status.pending{background:rgba(120,100,120,0.15);color:var(--muted);}
+.queue-status.generating{background:rgba(99,102,241,0.15);color:var(--blue);}
+.queue-status.ready{background:rgba(34,197,94,0.15);color:var(--success);}
+.queue-status.published{background:rgba(120,100,120,0.1);color:var(--muted);}
+.queue-body{padding:0 14px 14px;display:none;}
+.queue-item.open .queue-body{display:block;}
+.queue-chevron{font-size:0.7rem;color:var(--muted);transition:transform 0.15s;flex-shrink:0;}
+.queue-item.open .queue-chevron{transform:rotate(180deg);}
 
 /* IMAGE GRID */
 .img-grid{display:flex;gap:7px;flex-wrap:wrap;}
-.img-cell{position:relative;width:74px;height:52px;border-radius:5px;overflow:hidden;border:2px solid var(--border);cursor:pointer;transition:border-color 0.12s;}
+.img-cell{position:relative;width:74px;height:52px;border-radius:8px;overflow:hidden;border:2px solid var(--border);cursor:pointer;transition:border-color 0.12s;}
 .img-cell.on{border-color:var(--accent);}
 .img-cell img{width:100%;height:100%;object-fit:cover;display:block;}
 .img-tick{position:absolute;top:3px;right:3px;width:14px;height:14px;background:var(--accent);border-radius:50%;display:none;align-items:center;justify-content:center;font-size:0.5rem;color:#fff;}
 .img-cell.on .img-tick{display:flex;}
 
+/* TOGGLE */
+.toggle-row{display:flex;align-items:center;gap:10px;padding:10px 0;}
+.toggle{position:relative;width:36px;height:20px;flex-shrink:0;-webkit-app-region:no-drag;}
+.toggle input{opacity:0;width:0;height:0;}
+.toggle-slider{position:absolute;inset:0;background:rgba(140,110,130,0.3);border-radius:20px;cursor:pointer;transition:0.2s;}
+.toggle-slider:before{content:'';position:absolute;width:14px;height:14px;left:3px;top:3px;background:#fff;border-radius:50%;transition:0.2s;box-shadow:0 1px 4px rgba(0,0,0,0.2);}
+.toggle input:checked + .toggle-slider{background:var(--accent);}
+.toggle input:checked + .toggle-slider:before{transform:translateX(16px);}
+.toggle-label{font-size:0.82rem;font-weight:500;}
+
 /* REDDIT MOCK */
-.reddit-mock{background:#1a1a1b;border:1px solid #343536;border-radius:5px;overflow:hidden;font-family:var(--font);}
-.reddit-mock-head{padding:8px 12px;font-size:0.7rem;color:#818384;border-bottom:1px solid #343536;}
+.reddit-mock{background:rgba(20,14,22,0.82);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border:1px solid rgba(255,255,255,0.07);border-radius:12px;overflow:hidden;}
+.reddit-mock-head{padding:8px 12px;font-size:0.7rem;color:#818384;border-bottom:1px solid rgba(255,255,255,0.06);}
 .reddit-mock-head strong{color:var(--accent);}
 .reddit-mock-body{padding:12px;}
 .reddit-mock-title{font-size:0.95rem;font-weight:700;color:#d7dadc;margin-bottom:7px;line-height:1.35;}
 .reddit-mock-text{font-size:0.8rem;color:#9a9a9a;line-height:1.6;white-space:pre-wrap;}
-.reddit-mock-link{color:#4fbdff;font-size:0.72rem;margin-top:8px;display:block;}
+.reddit-mock-link{color:#7b9ef0;font-size:0.72rem;margin-top:8px;display:block;}
 .reddit-mock-imgs{display:flex;gap:5px;margin-top:8px;flex-wrap:wrap;}
-.reddit-mock-imgs img{width:66px;height:48px;object-fit:cover;border-radius:3px;}
-.reddit-mock-foot{padding:7px 12px;border-top:1px solid #343536;font-size:0.66rem;color:#818384;display:flex;gap:12px;}
+.reddit-mock-imgs img{width:66px;height:48px;object-fit:cover;border-radius:4px;}
+.reddit-mock-foot{padding:7px 12px;border-top:1px solid rgba(255,255,255,0.05);font-size:0.66rem;color:#818384;display:flex;gap:12px;}
+
+/* DRAFTS */
+.draft-list{display:flex;flex-direction:column;gap:8px;}
+.draft-row{background:var(--glass2);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1px solid var(--border);border-radius:12px;padding:13px 15px;display:flex;align-items:flex-start;gap:12px;transition:all 0.14s;}
+.draft-row:hover{background:var(--glass);border-color:rgba(99,102,241,0.4);}
+.draft-info{flex:1;min-width:0;}
+.draft-title{font-size:0.88rem;font-weight:600;margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.draft-sub{font-size:0.72rem;color:var(--muted);}
+.draft-actions{display:flex;gap:6px;flex-shrink:0;}
 
 /* LOG */
-.log{
-  background:var(--bg);border:1px solid var(--border);border-radius:6px;
-  padding:11px 13px;height:148px;overflow-y:auto;
-  font-size:0.78rem;line-height:1.8;font-family:var(--font);
-  transition:background 0.18s;
-}
+.log{background:rgba(0,0,0,0.28);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border:1px solid var(--border);border-radius:10px;padding:11px 13px;height:148px;overflow-y:auto;font-size:0.78rem;line-height:1.8;font-family:var(--font);}
 .log::-webkit-scrollbar{width:3px;}
-.log::-webkit-scrollbar-thumb{background:var(--border);}
+.log::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.12);}
 .log-row{display:flex;gap:10px;}
 .lt{color:var(--muted);flex-shrink:0;}
 .li{color:var(--blue);}.lo{color:var(--success);}.le{color:var(--accent);}.lw{color:var(--warn);}
 
 /* MISC */
-.progress{height:2px;background:var(--border);border-radius:2px;overflow:hidden;margin:10px 0;}
+.progress{height:2px;background:rgba(255,255,255,0.12);border-radius:2px;overflow:hidden;margin:10px 0;}
 .progress-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--blue));width:0;transition:width 0.35s ease;}
-.spinner{width:12px;height:12px;border-radius:50%;border:2px solid rgba(255,255,255,0.15);border-top-color:#fff;animation:spin 0.65s linear infinite;display:inline-block;}
+.spinner{width:12px;height:12px;border-radius:50%;border:2px solid rgba(255,255,255,0.18);border-top-color:#fff;animation:spin 0.65s linear infinite;display:inline-block;}
 @keyframes spin{to{transform:rotate(360deg)}}
-.empty{color:var(--muted);font-size:0.8rem;padding:20px 0;text-align:center;font-weight:400;}
+.empty{color:var(--muted);font-size:0.8rem;padding:20px 0;text-align:center;}
 
 /* GUIDE */
 .guide-step{display:flex;gap:14px;padding:14px 0;border-bottom:1px solid var(--border);}
 .guide-step:last-child{border-bottom:none;}
-.guide-num{width:26px;height:26px;background:var(--surface2);border:1px solid var(--border);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:0.72rem;font-weight:800;font-family:var(--font-display);flex-shrink:0;color:var(--accent);}
+.guide-num{width:26px;height:26px;background:rgba(232,70,10,0.1);border:1px solid rgba(232,70,10,0.25);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:0.72rem;font-weight:800;flex-shrink:0;color:var(--accent);}
 .guide-body h4{font-size:0.88rem;font-weight:700;margin-bottom:4px;}
-.guide-body p{font-size:0.8rem;color:var(--muted);line-height:1.65;font-weight:400;}
+.guide-body p{font-size:0.8rem;color:var(--muted);line-height:1.65;}
 .guide-body p strong{color:var(--text);font-weight:600;}
-.guide-body code{background:var(--surface2);padding:1px 5px;border-radius:3px;color:var(--blue);font-size:0.76rem;}
+.guide-body code{background:var(--glass2);padding:1px 5px;border-radius:3px;color:var(--blue);font-size:0.76rem;}
 .guide-link{color:var(--blue);cursor:pointer;font-weight:500;text-decoration:underline;}
-.guide-link:hover{opacity:0.8;}
+.guide-link:hover{opacity:0.75;}
 
 /* TOAST */
-#toast{
-  position:fixed;bottom:20px;right:20px;
-  background:var(--surface2);border:1px solid var(--border);
-  border-radius:8px;padding:10px 16px;font-size:0.8rem;font-weight:500;
-  display:none;z-index:999;max-width:280px;
-  animation:slideUp 0.18s ease;font-family:var(--font);
-}
-#toast.ok{border-color:var(--success);}
-#toast.err{border-color:var(--accent);}
+#toast{position:fixed;bottom:20px;right:20px;background:var(--glass);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border:1px solid var(--border);border-radius:12px;padding:10px 16px;font-size:0.8rem;font-weight:500;display:none;z-index:999;max-width:280px;box-shadow:var(--shadow);animation:slideUp 0.18s ease;font-family:var(--font);}
+#toast.ok{border-color:rgba(34,197,94,0.6);}
+#toast.err{border-color:rgba(232,70,10,0.6);}
 @keyframes slideUp{from{transform:translateY(8px);opacity:0}to{transform:none;opacity:1}}
 </style>
 </head>
@@ -255,7 +238,27 @@ textarea{resize:vertical;min-height:88px;line-height:1.6;}
 <div class="titlebar">
   <div style="width:100px"></div>
   <div class="titlebar-title"><span class="dot"></span> WEBFLOW2REDDIT</div>
-  <button id="theme-btn" style="-webkit-app-region:no-drag;cursor:pointer;font-size:1.1rem;background:none;border:1px solid #555;border-radius:6px;padding:4px 8px;" onclick="toggleTheme()">☀️</button>
+  <div class="theme-toggle" onclick="toggleTheme()" title="Toggle theme">
+    <div class="tt-track">
+      <div class="tt-star tt-star1"></div>
+      <div class="tt-star tt-star2"></div>
+      <div class="tt-star tt-star3"></div>
+      <div class="tt-thumb">
+        <svg class="tt-icon tt-sun" width="8" height="8" viewBox="0 0 24 24" fill="none">
+          <circle cx="12" cy="12" r="4.5" fill="#fff" opacity="0.95"/>
+          <g stroke="#fff" stroke-width="2.5" stroke-linecap="round" opacity="0.85">
+            <line x1="12" y1="2" x2="12" y2="5"/><line x1="12" y1="19" x2="12" y2="22"/>
+            <line x1="2" y1="12" x2="5" y2="12"/><line x1="19" y1="12" x2="22" y2="12"/>
+            <line x1="4.9" y1="4.9" x2="7.1" y2="7.1"/><line x1="16.9" y1="16.9" x2="19.1" y2="19.1"/>
+            <line x1="19.1" y1="4.9" x2="16.9" y2="7.1"/><line x1="7.1" y1="16.9" x2="4.9" y2="19.1"/>
+          </g>
+        </svg>
+        <svg class="tt-icon tt-moon" width="8" height="8" viewBox="0 0 24 24" fill="#fff" opacity="0.9">
+          <path d="M21 12.79A9 9 0 1 1 11.21 3a7 7 0 0 0 9.79 9.79z"/>
+        </svg>
+      </div>
+    </div>
+  </div>
 </div>
 
 <div class="app">
@@ -263,7 +266,9 @@ textarea{resize:vertical;min-height:88px;line-height:1.6;}
     <div class="sidebar-label">Workflow</div>
     <div class="nav-item active" id="nav-credentials" onclick="nav('credentials')"><span class="nav-icon">🔑</span> Credentials</div>
     <div class="nav-item" id="nav-posts" onclick="nav('posts')"><span class="nav-icon">📄</span> CMS Items</div>
+    <div class="nav-item" id="nav-batch" onclick="nav('batch')"><span class="nav-icon">⚡</span> Batch Queue <span class="nav-badge" id="batch-badge" style="display:none">0</span></div>
     <div class="nav-item" id="nav-compose" onclick="nav('compose')"><span class="nav-icon">✍️</span> Compose</div>
+    <div class="nav-item" id="nav-drafts" onclick="nav('drafts')"><span class="nav-icon">📝</span> Drafts <span class="nav-badge" id="drafts-badge" style="display:none">0</span></div>
     <div class="nav-item" id="nav-publish" onclick="nav('publish')"><span class="nav-icon">🚀</span> Publish</div>
     <div class="sidebar-label">Help</div>
     <div class="nav-item" id="nav-guide" onclick="nav('guide')"><span class="nav-icon">📖</span> Setup Guide</div>
@@ -278,29 +283,15 @@ textarea{resize:vertical;min-height:88px;line-height:1.6;}
     <!-- CREDENTIALS -->
     <div class="panel active" id="panel-credentials">
       <div class="page-title">Credentials</div>
-      <div class="page-sub">Saved locally on your machine — never sent anywhere except directly to Webflow, Reddit, and Anthropic.</div>
-
+      <div class="page-sub">Saved locally on your machine — never sent anywhere except directly to Webflow, Reddit, and your AI provider.</div>
       <div class="card">
         <div class="card-label" style="margin-bottom:14px">🌐 <em>Webflow</em></div>
         <div class="two-col">
-          <div class="field">
-            <label>API Token</label>
-            <input type="password" id="wf-token" placeholder="••••••••••••••••"/>
-            <div class="hint">Account → Integrations → API Access</div>
-          </div>
-          <div class="field">
-            <label>Collection ID</label>
-            <input type="text" id="wf-collid" placeholder="5f4dbc..."/>
-            <div class="hint">CMS → your collection → URL bar</div>
-          </div>
+          <div class="field"><label>API Token</label><input type="password" id="wf-token" placeholder="••••••••••••••••"/><div class="hint">Account → Integrations → API Access</div></div>
+          <div class="field"><label>Collection ID</label><input type="text" id="wf-collid" placeholder="5f4dbc..."/><div class="hint">CMS → your collection → URL bar</div></div>
         </div>
-        <div class="field">
-          <label>Site Base URL</label>
-          <input type="text" id="wf-baseurl" placeholder="https://yoursite.com"/>
-          <div class="hint">Used to build links back to each post</div>
-        </div>
+        <div class="field"><label>Site Base URL</label><input type="text" id="wf-baseurl" placeholder="https://yoursite.com"/></div>
       </div>
-
       <div class="card">
         <div class="card-label" style="margin-bottom:14px">🔴 <em>Reddit</em></div>
         <div class="two-col">
@@ -311,31 +302,50 @@ textarea{resize:vertical;min-height:88px;line-height:1.6;}
           <div class="field"><label>Username</label><input type="text" id="rd-user" placeholder="your_reddit_name"/></div>
           <div class="field"><label>Password</label><input type="password" id="rd-pass" placeholder="••••••••••••••••"/></div>
         </div>
-        <div class="field">
-          <label>Default Subreddit</label>
-          <input type="text" id="rd-sub" placeholder="r/mysubreddit"/>
-        </div>
+        <div class="field"><label>Default Subreddit</label><input type="text" id="rd-sub" placeholder="r/mysubreddit"/></div>
       </div>
-
       <div class="card">
-        <div class="card-label" style="margin-bottom:14px">🤖 <em>Anthropic — AI Summaries</em></div>
+        <div class="card-label" style="margin-bottom:14px">🤖 <em>AI — Summaries</em></div>
         <div class="field">
-          <label>API Key</label>
+          <label>AI Provider</label>
+          <select id="ai-provider" onchange="toggleAiProvider()">
+            <option value="anthropic">Anthropic (Claude)</option>
+            <option value="openai">OpenAI (ChatGPT)</option>
+          </select>
+        </div>
+        <div class="field" id="anthropic-field">
+          <label>Anthropic API Key</label>
           <input type="password" id="claude-key" placeholder="sk-ant-••••••••••••••••"/>
           <div class="hint">Get yours at console.anthropic.com → API Keys</div>
         </div>
+        <div class="field" id="openai-field" style="display:none">
+          <label>OpenAI API Key</label>
+          <input type="password" id="openai-key" placeholder="sk-••••••••••••••••"/>
+          <div class="hint">Get yours at platform.openai.com → API Keys</div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="btn-row" style="margin-top:0">
+          <button class="btn btn-primary" onclick="saveCreds()">💾 Save Credentials</button>
+          <button class="btn btn-ghost" onclick="fetchFields()" id="load-fields-btn">🗂️ Load Collection Fields</button>
+          <span id="save-ok" style="font-size:0.78rem;color:var(--success);display:none;font-weight:600;">✓ Saved!</span>
+        </div>
       </div>
 
-      <div class="btn-row">
-        <button class="btn btn-primary" onclick="saveCreds()">💾 Save Credentials</button>
-        <span id="save-ok" style="font-size:0.78rem;color:var(--success);display:none;font-weight:600;">✓ Saved!</span>
+      <div class="card" id="field-mapping-card" style="display:none">
+        <div class="card-header">
+          <div class="card-label">🗂️ <em>Field Mapping</em></div>
+          <button class="btn btn-ghost btn-sm" onclick="fetchFields()">↺ Reload</button>
+        </div>
+        <div style="font-size:0.8rem;color:var(--muted);margin-bottom:14px;line-height:1.6;">Match your Webflow collection fields to what the app needs. These are saved automatically.</div>
+        <div id="field-mapping-body"><div class="empty">Loading fields…</div></div>
       </div>
     </div>
 
     <!-- CMS ITEMS -->
     <div class="panel" id="panel-posts">
       <div class="page-title">CMS Items</div>
-      <div class="page-sub">Fetch your Webflow collection and pick an item to publish.</div>
+      <div class="page-sub">Select one item for single mode, or select multiple and click <strong>Add to Batch</strong> to generate all summaries at once.</div>
       <div class="card">
         <div class="card-header">
           <div class="card-label">📄 <em>Webflow Collection</em></div>
@@ -345,35 +355,56 @@ textarea{resize:vertical;min-height:88px;line-height:1.6;}
         <div class="item-list" id="item-list"><div class="empty">Click "Fetch Items" to load your Webflow collection.</div></div>
       </div>
       <div class="btn-row">
-        <button class="btn btn-primary" id="btn-to-compose" onclick="nav('compose')" disabled>Next: Compose →</button>
+        <button class="btn btn-primary" id="btn-to-compose" onclick="goSingle()" disabled>✍️ Compose Single</button>
+        <button class="btn btn-blue" id="btn-to-batch" onclick="addToBatch()" disabled>⚡ Add to Batch Queue</button>
       </div>
     </div>
 
-    <!-- COMPOSE -->
+    <!-- BATCH QUEUE -->
+    <div class="panel" id="panel-batch">
+      <div class="page-title">Batch Queue</div>
+      <div class="page-sub">Generate AI summaries for all queued items at once, then review and publish each one individually.</div>
+      <div class="card">
+        <div class="card-header">
+          <div class="card-label">⚡ <em>Queue</em> &nbsp;<span id="queue-count" style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--muted);font-size:0.72rem"></span></div>
+          <div style="display:flex;gap:8px;">
+            <button class="btn btn-ghost btn-sm" onclick="clearQueue()">🗑 Clear</button>
+            <button class="btn btn-blue btn-sm" id="gen-all-btn" onclick="generateAll()">⚡ Generate All Summaries</button>
+          </div>
+        </div>
+        <div class="queue-list" id="queue-list"><div class="empty">No items in queue. Go to CMS Items and select multiple posts.</div></div>
+      </div>
+    </div>
+
+    <!-- COMPOSE (single) -->
     <div class="panel" id="panel-compose">
       <div class="page-title">Compose</div>
       <div class="page-sub">Generate an AI summary or write your own. Everything is editable.</div>
-
       <div class="card">
         <div class="card-header">
           <div class="card-label">✨ <em>Post Content</em></div>
-          <button class="btn btn-blue btn-sm" id="gen-btn" onclick="generateSummary()">⚡ Generate Summary</button>
+          <button class="btn btn-blue btn-sm" id="gen-btn" onclick="generateSingle()">⚡ Generate Summary</button>
         </div>
         <div class="field"><label>Reddit Post Title</label><input type="text" id="rd-title" placeholder="Your post title..." oninput="updatePreview()"/></div>
-        <div class="field"><label>Post Body</label><textarea id="rd-body" rows="5" placeholder="AI summary appears here, or type your own..." oninput="updatePreview()"></textarea></div>
+        <div class="field"><label>Post Body (Markdown supported)</label><textarea id="rd-body" rows="6" placeholder="AI summary appears here, or type your own..." oninput="updatePreview()"></textarea></div>
         <div class="field"><label>Subreddit</label><input type="text" id="compose-sub" placeholder="r/subreddit" oninput="updatePreview()"/></div>
       </div>
-
       <div class="card">
-        <div class="card-label">🖼️ <em>Images</em> &nbsp;<span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--muted);font-size:0.72rem">Click to toggle</span></div>
-        <div style="height:12px"></div>
-        <div class="img-grid" id="img-grid"><div class="empty" style="width:100%">No images found in selected item.</div></div>
+        <div class="card-label">🖼️ <em>Images</em></div>
+        <div style="height:10px"></div>
+        <div class="toggle-row">
+          <label class="toggle"><input type="checkbox" id="include-images" checked onchange="updatePreview()"><span class="toggle-slider"></span></label>
+          <span class="toggle-label">Include images in post</span>
+        </div>
+        <div id="img-section">
+          <div style="height:8px"></div>
+          <div class="img-grid" id="img-grid"><div class="empty" style="width:100%">No images found.</div></div>
+        </div>
       </div>
-
       <div class="card">
-        <div class="card-label" style="margin-bottom:12px">👁️ <em>Reddit Preview</em></div>
+        <div class="card-label" style="margin-bottom:12px">👁️ <em>Preview</em></div>
         <div class="reddit-mock">
-          <div class="reddit-mock-head">Posted by <strong id="prev-user">u/you</strong> in <strong id="prev-sub" style="color:var(--blue)">r/subreddit</strong></div>
+          <div class="reddit-mock-head">Posted by <strong id="prev-user">u/you</strong> in <strong id="prev-sub" style="color:#7b9ef0">r/subreddit</strong></div>
           <div class="reddit-mock-body">
             <div class="reddit-mock-title" id="prev-title">Your title here</div>
             <div class="reddit-mock-text" id="prev-body"></div>
@@ -383,11 +414,18 @@ textarea{resize:vertical;min-height:88px;line-height:1.6;}
           <div class="reddit-mock-foot"><span>⬆ 0</span><span>💬 0 comments</span><span>🔗 Share</span></div>
         </div>
       </div>
-
       <div class="btn-row">
         <button class="btn btn-ghost" onclick="nav('posts')">← Back</button>
+        <button class="btn btn-warn" onclick="saveDraftFromCompose()">📝 Save Draft</button>
         <button class="btn btn-primary" onclick="nav('publish')">Review & Publish →</button>
       </div>
+    </div>
+
+    <!-- DRAFTS -->
+    <div class="panel" id="panel-drafts">
+      <div class="page-title">Drafts</div>
+      <div class="page-sub">Posts saved for later. Click one to open and edit, then publish when ready.</div>
+      <div class="draft-list" id="draft-list"><div class="empty">No drafts yet.</div></div>
     </div>
 
     <!-- PUBLISH -->
@@ -400,9 +438,7 @@ textarea{resize:vertical;min-height:88px;line-height:1.6;}
       </div>
       <div class="card">
         <div class="card-label" style="margin-bottom:12px">📡 <em>Activity Log</em></div>
-        <div class="log" id="log">
-          <div class="log-row"><span class="lt">--:--</span><span class="li">Ready — press Publish when ready.</span></div>
-        </div>
+        <div class="log" id="log"><div class="log-row"><span class="lt">--:--</span><span class="li">Ready — press Publish when ready.</span></div></div>
       </div>
       <div class="btn-row">
         <button class="btn btn-ghost" onclick="nav('compose')">← Back</button>
@@ -414,66 +450,22 @@ textarea{resize:vertical;min-height:88px;line-height:1.6;}
     <div class="panel" id="panel-guide">
       <div class="page-title">Setup Guide</div>
       <div class="page-sub">Step-by-step instructions to get all your API keys.</div>
-
       <div class="card">
         <div class="card-label" style="margin-bottom:4px">🌐 <em>Webflow</em></div>
-        <div class="guide-step">
-          <div class="guide-num">1</div>
-          <div class="guide-body">
-            <h4>Generate a Webflow API Token</h4>
-            <p>Go to <span class="guide-link" onclick="window.api.openExternal('https://webflow.com/dashboard')">webflow.com/dashboard</span> → click your avatar → <strong>Account Settings</strong> → <strong>Integrations</strong> → <strong>API Access</strong> → <strong>Generate API Token</strong>. Copy it immediately — it only shows once.</p>
-          </div>
-        </div>
-        <div class="guide-step">
-          <div class="guide-num">2</div>
-          <div class="guide-body">
-            <h4>Find your Collection ID</h4>
-            <p>In Webflow → <strong>CMS</strong> → click your collection → look at the browser URL. The ID appears after <code>/collections/</code>.</p>
-          </div>
-        </div>
-        <div class="guide-step">
-          <div class="guide-num">3</div>
-          <div class="guide-body">
-            <h4>Your site base URL</h4>
-            <p>Your published site address, e.g. <code>https://yoursite.com</code>. Used to build the link included in your Reddit post.</p>
-          </div>
-        </div>
+        <div class="guide-step"><div class="guide-num">1</div><div class="guide-body"><h4>Generate a Webflow API Token</h4><p>Go to <span class="guide-link" onclick="window.api.openExternal('https://webflow.com/dashboard')">webflow.com/dashboard</span> → click your avatar → <strong>Account Settings</strong> → <strong>Integrations</strong> → <strong>API Access</strong> → <strong>Generate API Token</strong>. Copy it immediately — it only shows once.</p></div></div>
+        <div class="guide-step"><div class="guide-num">2</div><div class="guide-body"><h4>Find your Collection ID</h4><p>In Webflow → <strong>CMS</strong> → click your collection → look at the browser URL. The ID appears after <code>/collections/</code>.</p></div></div>
+        <div class="guide-step"><div class="guide-num">3</div><div class="guide-body"><h4>Your site base URL</h4><p>Your published site address e.g. <code>https://yoursite.com</code>. Used to build the link in your Reddit post.</p></div></div>
       </div>
-
       <div class="card">
         <div class="card-label" style="margin-bottom:4px">🔴 <em>Reddit</em></div>
-        <div class="guide-step">
-          <div class="guide-num">1</div>
-          <div class="guide-body">
-            <h4>Create a Reddit App</h4>
-            <p>Go to <span class="guide-link" onclick="window.api.openExternal('https://www.reddit.com/prefs/apps')">reddit.com/prefs/apps</span> → scroll to the bottom → click <strong>"create another app"</strong>.</p>
-          </div>
-        </div>
-        <div class="guide-step">
-          <div class="guide-num">2</div>
-          <div class="guide-body">
-            <h4>Fill in the form</h4>
-            <p><strong>Name:</strong> anything (e.g. Webflow2Reddit)<br/><strong>Type:</strong> select <code>script</code><br/><strong>Redirect URI:</strong> <code>http://localhost:8080</code><br/>Then click <strong>Create App</strong>.</p>
-          </div>
-        </div>
-        <div class="guide-step">
-          <div class="guide-num">3</div>
-          <div class="guide-body">
-            <h4>Copy your credentials</h4>
-            <p>The <strong>Client ID</strong> is the short string directly under your app name. The <strong>Client Secret</strong> is labeled "secret". Use your normal Reddit username and password for the other fields.</p>
-          </div>
-        </div>
+        <div class="guide-step"><div class="guide-num">1</div><div class="guide-body"><h4>Create a Reddit App</h4><p>Go to <span class="guide-link" onclick="window.api.openExternal('https://www.reddit.com/prefs/apps')">reddit.com/prefs/apps</span> → scroll to the bottom → click <strong>"create another app"</strong>.</p></div></div>
+        <div class="guide-step"><div class="guide-num">2</div><div class="guide-body"><h4>Fill in the form</h4><p><strong>Name:</strong> anything (e.g. Webflow2Reddit)<br/><strong>Type:</strong> select <code>script</code><br/><strong>Redirect URI:</strong> <code>http://localhost:8080</code><br/>Then click <strong>Create App</strong>.</p></div></div>
+        <div class="guide-step"><div class="guide-num">3</div><div class="guide-body"><h4>Copy your credentials</h4><p>The <strong>Client ID</strong> is the short string directly under your app name. The <strong>Client Secret</strong> is labeled "secret". Use your normal Reddit username and password.</p></div></div>
       </div>
-
       <div class="card">
-        <div class="card-label" style="margin-bottom:4px">🤖 <em>Anthropic — optional</em></div>
-        <div class="guide-step">
-          <div class="guide-num">1</div>
-          <div class="guide-body">
-            <h4>Get an API Key</h4>
-            <p>Sign up at <span class="guide-link" onclick="window.api.openExternal('https://console.anthropic.com')">console.anthropic.com</span> → go to <strong>API Keys</strong> → click <strong>Create Key</strong>. Free credits are included when you sign up.</p>
-          </div>
-        </div>
+        <div class="card-label" style="margin-bottom:4px">🤖 <em>AI — optional</em></div>
+        <div class="guide-step"><div class="guide-num">1</div><div class="guide-body"><h4>Anthropic (Claude)</h4><p>Sign up at <span class="guide-link" onclick="window.api.openExternal('https://console.anthropic.com')">console.anthropic.com</span> → <strong>API Keys</strong> → <strong>Create Key</strong>. Free credits on signup.</p></div></div>
+        <div class="guide-step"><div class="guide-num">2</div><div class="guide-body"><h4>OpenAI (ChatGPT)</h4><p>Sign up at <span class="guide-link" onclick="window.api.openExternal('https://platform.openai.com')">platform.openai.com</span> → <strong>API Keys</strong> → <strong>Create new secret key</strong>. Add some credits to get started.</p></div></div>
       </div>
     </div>
 
@@ -483,37 +475,45 @@ textarea{resize:vertical;min-height:88px;line-height:1.6;}
 <div id="toast"></div>
 
 <script>
-// THEME
+// ─── THEME ───────────────────────────────────────
 function applyTheme(light) {
-  document.documentElement.classList.toggle('light', light);
-  document.getElementById('theme-btn').textContent = light ? '🌙' : '☀️';
+  document.documentElement.classList.toggle('dark', !light);
 }
 function toggleTheme() {
-  const light = document.documentElement.classList.toggle('light');
-  document.getElementById('theme-btn').textContent = light ? '🌙' : '☀️';
+  const light = !document.documentElement.classList.toggle('dark');
   window.api.saveTheme(light ? 'light' : 'dark');
 }
 async function loadTheme() {
-  try {
-    const t = await window.api.loadTheme();
-    if (t === 'light') applyTheme(true);
-  } catch(e) {}
+  try { const t = await window.api.loadTheme(); if (t !== 'dark') applyTheme(true); } catch(e) {}
 }
 
-// STATE
-const S = { creds: {}, posts: [], selected: null, selImgs: [] };
+// ─── STATE ───────────────────────────────────────
+const S = {
+  creds: {}, posts: [], selected: null, selImgs: [],
+  queue: [],   // [{ post, title, body, imgs, status, id }]
+  drafts: [],
+};
 
-// NAV
+// ─── NAV ─────────────────────────────────────────
 function nav(id) {
   if (id === 'compose' && !S.selected) { toast('Select a CMS item first', 'err'); return; }
+  if (id === 'publish' && !S.selected) { toast('Nothing to publish yet', 'err'); return; }
   if (id === 'publish') buildFinalPreview();
+  if (id === 'drafts') renderDrafts();
+  if (id === 'batch') renderQueue();
   document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
   document.getElementById('panel-' + id).classList.add('active');
   document.getElementById('nav-' + id).classList.add('active');
 }
 
-// CREDENTIALS
+// ─── CREDENTIALS ─────────────────────────────────
+function toggleAiProvider() {
+  const p = document.getElementById('ai-provider').value;
+  document.getElementById('anthropic-field').style.display = p === 'anthropic' ? 'block' : 'none';
+  document.getElementById('openai-field').style.display = p === 'openai' ? 'block' : 'none';
+}
+
 async function loadCreds() {
   try {
     const c = await window.api.loadCreds();
@@ -528,7 +528,10 @@ async function loadCreds() {
     document.getElementById('rd-pass').value     = c.rdPass     || '';
     document.getElementById('rd-sub').value      = c.rdSub      || '';
     document.getElementById('claude-key').value  = c.claudeKey  || '';
+    document.getElementById('openai-key').value  = c.openaiKey  || '';
+    document.getElementById('ai-provider').value = c.aiProvider || 'anthropic';
     document.getElementById('compose-sub').value = c.rdSub      || '';
+    toggleAiProvider();
     refreshBadge();
   } catch(e) {}
 }
@@ -543,10 +546,12 @@ async function saveCreds() {
     rdUser:     document.getElementById('rd-user').value.trim(),
     rdPass:     document.getElementById('rd-pass').value,
     rdSub:      document.getElementById('rd-sub').value.trim(),
+    aiProvider: document.getElementById('ai-provider').value,
     claudeKey:  document.getElementById('claude-key').value.trim(),
+    openaiKey:  document.getElementById('openai-key').value.trim(),
   };
   await window.api.saveCreds(c);
-  S.creds = c;
+  S.creds = { ...c, fieldMap: S.creds.fieldMap || {} };
   document.getElementById('compose-sub').value = c.rdSub || '';
   const ok = document.getElementById('save-ok');
   ok.style.display = 'inline';
@@ -556,11 +561,14 @@ async function saveCreds() {
 }
 
 async function clearAllCreds() {
-  if (!confirm('Clear all saved credentials? This cannot be undone.')) return;
+  if (!confirm('Clear all saved credentials?')) return;
   await window.api.clearCreds();
   S.creds = {};
-  ['wf-token','wf-collid','wf-baseurl','rd-clientid','rd-secret','rd-user','rd-pass','rd-sub','claude-key']
+  S.collectionFields = [];
+  ['wf-token','wf-collid','wf-baseurl','rd-clientid','rd-secret','rd-user','rd-pass','rd-sub','claude-key','openai-key']
     .forEach(id => document.getElementById(id).value = '');
+  document.getElementById('field-mapping-card').style.display = 'none';
+  document.getElementById('field-mapping-body').innerHTML = '<div class="empty">Loading fields…</div>';
   refreshBadge();
   toast('Credentials cleared', 'ok');
 }
@@ -573,7 +581,7 @@ function refreshBadge() {
   el.className = 'creds-badge' + (ok ? ' ok' : '');
 }
 
-// FETCH ITEMS
+// ─── FETCH ITEMS ─────────────────────────────────
 async function fetchPosts() {
   const { wfToken, wfCollId } = S.creds;
   if (!wfToken || !wfCollId) { toast('Save Webflow credentials first', 'err'); nav('credentials'); return; }
@@ -582,8 +590,7 @@ async function fetchPosts() {
   const fill = document.getElementById('fetch-fill');
   btn.innerHTML = '<span class="spinner"></span> Loading...';
   btn.disabled = true;
-  prog.style.display = 'block';
-  fill.style.width = '40%';
+  prog.style.display = 'block'; fill.style.width = '40%';
   try {
     const data = await window.api.fetchPosts({ token: wfToken, collectionId: wfCollId });
     fill.style.width = '100%';
@@ -594,8 +601,7 @@ async function fetchPosts() {
     toast('Webflow error: ' + e.message, 'err');
     document.getElementById('item-list').innerHTML = `<div class="empty" style="color:var(--accent)">${e.message}</div>`;
   } finally {
-    btn.innerHTML = '↺ Refresh';
-    btn.disabled = false;
+    btn.innerHTML = '↺ Refresh'; btn.disabled = false;
     setTimeout(() => { prog.style.display='none'; fill.style.width='0%'; }, 600);
   }
 }
@@ -604,38 +610,220 @@ function renderItems() {
   const list = document.getElementById('item-list');
   if (!S.posts.length) { list.innerHTML = '<div class="empty">No items found.</div>'; return; }
   list.innerHTML = S.posts.map((p, i) => {
-    const img  = p['main-image']?.url || p['thumbnail']?.url || p['featured-image']?.url || '';
+    const img  = getField(p, 'image');
     const date = p['published-on'] || p['created-on'] || '';
-    const name = p.name || p['post-title'] || p['title'] || 'Untitled';
-    return `<div class="item-row" id="ir${i}" onclick="selectItem(${i})">
+    const name = getField(p, 'title');
+    return `<div class="item-row" id="ir${i}" onclick="toggleItemSelect(${i})">
       ${img ? `<img class="item-thumb" src="${img}" onerror="this.style.display='none'">` : `<div class="item-thumb-empty">📄</div>`}
       <div class="item-info">
         <div class="item-name">${name}</div>
-        <div class="item-meta">${date ? new Date(date).toLocaleDateString() : ''}${p.slug ? ' · /'+p.slug : ''}</div>
+        <div class="item-meta">${date ? new Date(date).toLocaleDateString() : ''}${getField(p,'slug') ? ' · /'+getField(p,'slug') : ''}</div>
       </div>
       <div class="item-check">✓</div>
     </div>`;
   }).join('');
 }
 
-function selectItem(i) {
-  S.selected = S.posts[i];
-  document.querySelectorAll('.item-row').forEach((el, j) => el.classList.toggle('selected', j === i));
-  document.getElementById('btn-to-compose').disabled = false;
-  document.getElementById('rd-title').value = S.selected.name || S.selected['post-title'] || S.selected['title'] || '';
-  extractImages(S.selected);
-  updatePreview();
+// multi-select for batch, single-select for compose
+const _selected = new Set();
+function toggleItemSelect(i) {
+  if (_selected.has(i)) _selected.delete(i);
+  else _selected.add(i);
+  document.querySelectorAll('.item-row').forEach((el, j) => el.classList.toggle('selected', _selected.has(j)));
+  const any = _selected.size > 0;
+  document.getElementById('btn-to-compose').disabled = _selected.size !== 1;
+  document.getElementById('btn-to-batch').disabled = !any;
 }
 
-function extractImages(post) {
+function goSingle() {
+  const i = [..._selected][0];
+  S.selected = S.posts[i];
+  document.getElementById('rd-title').value = getField(S.selected, 'title');
+  document.getElementById('compose-sub').value = S.creds.rdSub || '';
+  extractImages(S.selected);
+  updatePreview();
+  nav('compose');
+}
+
+function addToBatch() {
+  const newItems = [..._selected].map(i => S.posts[i]).filter(p => {
+    const id = p._id || p.id || p.slug;
+    return !S.queue.find(q => q.id === id);
+  });
+  newItems.forEach(p => {
+    S.queue.push({
+      id: p._id || p.id || p.slug || Math.random().toString(36).slice(2),
+      post: p,
+      title: getField(p, 'title'),
+      body: '',
+      imgs: extractImageUrls(p),
+      selImgs: extractImageUrls(p).slice(0, 3),
+      includeImages: true,
+      sub: S.creds.rdSub || '',
+      status: 'pending',
+    });
+  });
+  updateBatchBadge();
+  toast(`Added ${newItems.length} item(s) to queue`, 'ok');
+  nav('batch');
+}
+
+function updateBatchBadge() {
+  const b = document.getElementById('batch-badge');
+  const n = S.queue.filter(q => q.status !== 'published').length;
+  b.textContent = n;
+  b.style.display = n > 0 ? 'inline' : 'none';
+}
+
+// ─── BATCH ───────────────────────────────────────
+function renderQueue() {
+  const list = document.getElementById('queue-list');
+  document.getElementById('queue-count').textContent = S.queue.length ? `${S.queue.length} item${S.queue.length>1?'s':''}` : '';
+  if (!S.queue.length) { list.innerHTML = '<div class="empty">No items in queue.</div>'; return; }
+  list.innerHTML = S.queue.map((q, i) => {
+    const img = getField(q.post, 'image');
+    const statusLabel = {pending:'Pending',generating:'Generating…',ready:'Ready',published:'Published'}[q.status] || q.status;
+    return `<div class="queue-item ${q.status === 'ready' || q.status === 'published' ? q.status : ''}" id="qi${i}">
+      <div class="queue-header" onclick="toggleQueueItem(${i})">
+        ${img ? `<img class="queue-thumb" src="${img}" onerror="this.style.display='none'">` : '<div class="queue-thumb" style="background:var(--glass2)"></div>'}
+        <div class="queue-name">${q.title || 'Untitled'}</div>
+        <span class="queue-status ${q.status}">${statusLabel}</span>
+        <span class="queue-chevron">▼</span>
+      </div>
+      <div class="queue-body">
+        <div class="field"><label>Title</label><input type="text" value="${escHtml(q.title)}" oninput="S.queue[${i}].title=this.value"/></div>
+        <div class="field"><label>Body (Markdown)</label><textarea rows="5" oninput="S.queue[${i}].body=this.value">${escHtml(q.body)}</textarea></div>
+        <div class="field"><label>Subreddit</label><input type="text" value="${escHtml(q.sub)}" oninput="S.queue[${i}].sub=this.value"/></div>
+        <div class="toggle-row">
+          <label class="toggle"><input type="checkbox" ${q.includeImages?'checked':''} onchange="S.queue[${i}].includeImages=this.checked"><span class="toggle-slider"></span></label>
+          <span class="toggle-label">Include images</span>
+        </div>
+        ${q.imgs.length ? `<div class="img-grid" style="margin-top:8px">${q.imgs.map((url,j)=>`<div class="img-cell ${q.selImgs.includes(url)?'on':''}" onclick="toggleQueueImg(${i},'${url}')"><img src="${url}" onerror="this.parentElement.style.display='none'"><div class="img-tick">✓</div></div>`).join('')}</div>` : ''}
+        <div class="btn-row" style="margin-top:12px">
+          <button class="btn btn-warn btn-sm" onclick="saveDraftFromQueue(${i})">📝 Save Draft</button>
+          <button class="btn btn-success btn-sm" onclick="publishQueueItem(${i})" ${q.status==='published'?'disabled':''}>🚀 ${q.status==='published'?'Published':'Publish'}</button>
+          <button class="btn btn-danger btn-sm" onclick="removeFromQueue(${i})">Remove</button>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+  // restore textareas (innerHTML doesn't handle value correctly for textarea)
+  S.queue.forEach((q, i) => {
+    const ta = document.querySelector(`#qi${i} textarea`);
+    if (ta) ta.value = q.body;
+  });
+}
+
+function toggleQueueItem(i) {
+  const el = document.getElementById('qi' + i);
+  el.classList.toggle('open');
+}
+
+function toggleQueueImg(i, url) {
+  const q = S.queue[i];
+  if (q.selImgs.includes(url)) q.selImgs = q.selImgs.filter(u => u !== url);
+  else q.selImgs.push(url);
+  renderQueue();
+  document.getElementById('qi' + i).classList.add('open');
+}
+
+function removeFromQueue(i) {
+  S.queue.splice(i, 1);
+  updateBatchBadge();
+  renderQueue();
+}
+
+function clearQueue() {
+  if (!confirm('Clear the entire queue?')) return;
+  S.queue = [];
+  updateBatchBadge();
+  renderQueue();
+}
+
+async function generateAll() {
+  const pending = S.queue.filter(q => q.status === 'pending' || q.status === 'ready');
+  if (!pending.length) { toast('No pending items to generate', 'err'); return; }
+  const provider = S.creds.aiProvider || 'anthropic';
+  const apiKey = provider === 'openai' ? S.creds.openaiKey : S.creds.claudeKey;
+  if (!apiKey) { toast('No AI API key saved', 'err'); nav('credentials'); return; }
+
+  const btn = document.getElementById('gen-all-btn');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span> Generating…';
+
+  let hadError = false;
+  for (const q of S.queue) {
+    if (q.status === 'published') continue;
+    q.status = 'generating';
+    renderQueue();
+    try {
+      const raw = getField(q.post, 'content');
+      const content = typeof raw === 'string' ? raw.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim() : '';
+      const base = (S.creds.wfBaseUrl || '').replace(/\/$/, '');
+      const slug = getField(q.post, 'slug');
+      const link = slug ? `${base}/${slug}` : base;
+      q.body = await window.api.generateSummary({ provider, apiKey, title: q.title, content, link });
+      q.status = 'ready';
+    } catch(e) {
+      q.status = 'pending';
+      hadError = true;
+      toast(`Error on "${q.title}": ${e.message}`, 'err');
+    }
+    renderQueue();
+    document.getElementById('qi' + S.queue.indexOf(q))?.classList.add('open');
+  }
+
+  btn.disabled = false;
+  btn.innerHTML = '⚡ Generate All Summaries';
+  if (!hadError) toast('All summaries generated!', 'ok');
+}
+
+async function publishQueueItem(i) {
+  const q = S.queue[i];
+  if (!q.body && !q.title) { toast('No content to publish', 'err'); return; }
+  const c = S.creds;
+  const sub = (q.sub || c.rdSub || '').replace(/^r\//, '');
+  if (!sub) { toast('No subreddit set', 'err'); return; }
+  const base = (c.wfBaseUrl || '').replace(/\/$/, '');
+  const link = getField(q.post, 'slug') ? `${base}/${getField(q.post, 'slug')}` : base;
+  const fullText = [q.body, link ? `\n\n🔗 Full post: ${link}` : ''].filter(Boolean).join('');
+
+  const btns = document.querySelectorAll(`#qi${i} .btn-success`);
+  btns.forEach(b => { b.disabled = true; b.innerHTML = '<span class="spinner"></span>'; });
+
+  try {
+    const token = await window.api.redditAuth({ clientId: c.rdClientId, clientSecret: c.rdSecret, username: c.rdUser, password: c.rdPass });
+    await window.api.redditSubmit({ accessToken: token, subreddit: sub, title: q.title, text: fullText, username: c.rdUser });
+    q.status = 'published';
+    updateBatchBadge();
+    renderQueue();
+    toast(`"${q.title}" published! 🚀`, 'ok');
+  } catch(e) {
+    toast('Failed: ' + e.message, 'err');
+    btns.forEach(b => { b.disabled = false; b.innerHTML = '🚀 Publish'; });
+  }
+}
+
+// ─── SINGLE COMPOSE ──────────────────────────────
+function extractImageUrls(post) {
   const urls = new Set();
+  // First check mapped image field
+  const mappedImg = getField(post, 'image');
+  if (mappedImg) urls.add(mappedImg);
+  // Then scan all fields for image urls
   for (const v of Object.values(post)) {
     if (v?.url && /\.(jpg|jpeg|png|gif|webp)/i.test(v.url)) urls.add(v.url);
     if (typeof v === 'string' && /^https?:\/\/.+\.(jpg|jpeg|png|webp)/i.test(v)) urls.add(v);
   }
-  const body = post['post-body'] || post['body'] || post['content'] || '';
-  for (const m of body.matchAll(/src="([^"]+\.(jpg|jpeg|png|gif|webp)[^"]*)"/gi)) urls.add(m[1]);
-  const arr = [...urls].slice(0, 8);
+  const body = getField(post, 'content');
+  if (typeof body === 'string') {
+    for (const m of body.matchAll(/src="([^"]+\.(jpg|jpeg|png|gif|webp)[^"]*)"/gi)) urls.add(m[1]);
+  }
+  return [...urls].slice(0, 8);
+}
+
+function extractImages(post) {
+  const arr = extractImageUrls(post);
   S.selImgs = arr.slice(0, 3);
   const grid = document.getElementById('img-grid');
   if (!arr.length) { grid.innerHTML = '<div class="empty" style="width:100%">No images found.</div>'; return; }
@@ -653,92 +841,186 @@ function toggleImg(el, url) {
   updatePreview();
 }
 
-// AI SUMMARY
-async function generateSummary() {
+async function generateSingle() {
   if (!S.selected) { toast('Select a CMS item first', 'err'); return; }
-  const key = S.creds.claudeKey;
-  if (!key) { toast('No Anthropic API key saved', 'err'); nav('credentials'); return; }
+  const provider = S.creds.aiProvider || 'anthropic';
+  const apiKey = provider === 'openai' ? S.creds.openaiKey : S.creds.claudeKey;
+  if (!apiKey) { toast('No AI API key saved', 'err'); nav('credentials'); return; }
   const btn = document.getElementById('gen-btn');
   btn.innerHTML = '<span class="spinner"></span> Generating...';
   btn.disabled = true;
   const post = S.selected;
-  const title = post.name || post['post-title'] || post['title'] || '';
-  const raw = post['post-body'] || post['body'] || post['content'] || post['post-summary'] || '';
-  const content = raw.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
+  const title = getField(post, 'title');
+  const raw = getField(post, 'content');
+  const content = typeof raw === 'string' ? raw.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim() : '';
+  const base = (S.creds.wfBaseUrl || '').replace(/\/$/, '');
+  const slug = getField(post, 'slug');
+  const link = slug ? `${base}/${slug}` : base;
   try {
-    const text = await window.api.generateSummary({ apiKey: key, title, content });
+    const text = await window.api.generateSummary({ provider, apiKey, title, content, link });
     document.getElementById('rd-body').value = text;
     updatePreview();
     toast('Summary generated!', 'ok');
   } catch(e) {
     toast('AI error: ' + e.message, 'err');
   } finally {
-    btn.innerHTML = '⚡ Regenerate';
-    btn.disabled = false;
+    btn.innerHTML = '⚡ Regenerate'; btn.disabled = false;
   }
 }
 
-// PREVIEW
 function updatePreview() {
   const user   = (S.creds.rdUser || 'you').replace(/^u\//, '');
   const sub    = document.getElementById('compose-sub').value || S.creds.rdSub || 'subreddit';
   const title  = document.getElementById('rd-title').value;
   const body   = document.getElementById('rd-body').value;
-  const slug   = S.selected?.slug || '';
+  const slug   = S.selected ? getField(S.selected, 'slug') : '';
   const base   = (S.creds.wfBaseUrl || 'https://yoursite.com').replace(/\/$/, '');
   const link   = slug ? `${base}/${slug}` : base;
-  const subFmt = sub.startsWith('r/') ? sub : 'r/' + sub;
+  const withImgs = document.getElementById('include-images').checked;
+  document.getElementById('img-section').style.display = withImgs ? 'block' : 'none';
   document.getElementById('prev-user').textContent  = 'u/' + user;
-  document.getElementById('prev-sub').textContent   = subFmt;
+  document.getElementById('prev-sub').textContent   = sub.startsWith('r/') ? sub : 'r/' + sub;
   document.getElementById('prev-title').textContent = title || 'Your title here';
   document.getElementById('prev-body').textContent  = body || '';
   document.getElementById('prev-link').textContent  = '🔗 ' + link;
-  document.getElementById('prev-imgs').innerHTML = S.selImgs.slice(0, 4)
-    .map(u => `<img src="${u}" onerror="this.style.display='none'">`).join('');
+  document.getElementById('prev-imgs').innerHTML = withImgs
+    ? S.selImgs.slice(0,4).map(u => `<img src="${u}" onerror="this.style.display='none'">`).join('')
+    : '';
 }
 
-// FINAL PREVIEW & PUBLISH
+// ─── DRAFTS ──────────────────────────────────────
+async function loadDraftsFromDisk() {
+  try { S.drafts = await window.api.loadDrafts() || []; } catch(e) {}
+  updateDraftsBadge();
+}
+
+function updateDraftsBadge() {
+  const b = document.getElementById('drafts-badge');
+  b.textContent = S.drafts.length;
+  b.style.display = S.drafts.length > 0 ? 'inline' : 'none';
+}
+
+function renderDrafts() {
+  const list = document.getElementById('draft-list');
+  if (!S.drafts.length) { list.innerHTML = '<div class="empty">No drafts yet.</div>'; return; }
+  list.innerHTML = S.drafts.map((d, i) => `
+    <div class="draft-row">
+      <div class="draft-info">
+        <div class="draft-title">${escHtml(d.title || 'Untitled')}</div>
+        <div class="draft-sub">${d.sub ? 'r/' + d.sub.replace(/^r\//,'') : 'No subreddit'} · ${new Date(d.savedAt).toLocaleDateString()}</div>
+      </div>
+      <div class="draft-actions">
+        <button class="btn btn-blue btn-sm" onclick="openDraft(${i})">✏️ Edit</button>
+        <button class="btn btn-danger btn-sm" onclick="deleteDraft(${i})">🗑</button>
+      </div>
+    </div>`).join('');
+}
+
+function openDraft(i) {
+  const d = S.drafts[i];
+  S.selected = d.post || null;
+  document.getElementById('rd-title').value = d.title || '';
+  document.getElementById('rd-body').value = d.body || '';
+  document.getElementById('compose-sub').value = d.sub || S.creds.rdSub || '';
+  S.selImgs = d.selImgs || [];
+  document.getElementById('include-images').checked = d.includeImages !== false;
+  if (S.selected) {
+    // extractImages resets S.selImgs, so restore after
+    extractImages(S.selected);
+    S.selImgs = d.selImgs || [];
+    // re-mark selected cells based on saved selImgs
+    document.querySelectorAll('.img-cell').forEach(el => {
+      const img = el.querySelector('img');
+      if (img && S.selImgs.includes(img.src)) el.classList.add('on');
+      else el.classList.remove('on');
+    });
+  }
+  updatePreview();
+  nav('compose');
+}
+
+async function deleteDraft(i) {
+  const id = S.drafts[i].id;
+  S.drafts.splice(i, 1);
+  await window.api.deleteDraft(id);
+  updateDraftsBadge();
+  renderDrafts();
+  toast('Draft deleted', 'ok');
+}
+
+async function saveDraftFromCompose() {
+  const draft = {
+    id: Date.now().toString(),
+    title: document.getElementById('rd-title').value,
+    body: document.getElementById('rd-body').value,
+    sub: document.getElementById('compose-sub').value,
+    selImgs: S.selImgs,
+    includeImages: document.getElementById('include-images').checked,
+    post: S.selected,
+    savedAt: new Date().toISOString(),
+  };
+  const existing = S.drafts.findIndex(d => d.title === draft.title && d.post?._id === draft.post?._id);
+  if (existing >= 0) { draft.id = S.drafts[existing].id; S.drafts[existing] = draft; }
+  else S.drafts.unshift(draft);
+  await window.api.saveDraft(draft);
+  updateDraftsBadge();
+  toast('Draft saved ✓', 'ok');
+}
+
+async function saveDraftFromQueue(i) {
+  const q = S.queue[i];
+  const draft = {
+    id: 'q-' + q.id,
+    title: q.title, body: q.body, sub: q.sub,
+    selImgs: q.selImgs, includeImages: q.includeImages,
+    post: q.post, savedAt: new Date().toISOString(),
+  };
+  const existing = S.drafts.findIndex(d => d.id === draft.id);
+  if (existing >= 0) S.drafts[existing] = draft; else S.drafts.unshift(draft);
+  await window.api.saveDraft(draft);
+  updateDraftsBadge();
+  toast('Draft saved ✓', 'ok');
+}
+
+// ─── PUBLISH (single) ────────────────────────────
 function buildFinalPreview() {
   const title = document.getElementById('rd-title').value;
   const body  = document.getElementById('rd-body').value;
   const sub   = document.getElementById('compose-sub').value || S.creds.rdSub || '';
+  const withImgs = document.getElementById('include-images').checked;
   document.getElementById('final-content').innerHTML = `
-    <div style="margin-bottom:10px"><div style="font-size:0.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:3px">Subreddit</div><strong>${sub||'—'}</strong></div>
-    <div style="margin-bottom:10px"><div style="font-size:0.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:3px">Title</div><strong>${title||'—'}</strong></div>
-    <div style="margin-bottom:10px"><div style="font-size:0.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:3px">Body</div><span style="white-space:pre-wrap;font-size:0.82rem">${body||'—'}</span></div>
-    <div><div style="font-size:0.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:6px">Images (${S.selImgs.length})</div>
-    <div style="display:flex;gap:6px;flex-wrap:wrap">${S.selImgs.map(u=>`<img src="${u}" style="width:54px;height:38px;object-fit:cover;border-radius:4px;border:1px solid var(--border)" onerror="this.style.display='none'">`).join('')}</div></div>`;
+    <div style="margin-bottom:10px"><div style="font-size:0.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:3px">Subreddit</div><strong>${escHtml(sub)||'—'}</strong></div>
+    <div style="margin-bottom:10px"><div style="font-size:0.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:3px">Title</div><strong>${escHtml(title)||'—'}</strong></div>
+    <div style="margin-bottom:10px"><div style="font-size:0.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:3px">Body</div><span style="white-space:pre-wrap;font-size:0.82rem">${escHtml(body)||'—'}</span></div>
+    <div><div style="font-size:0.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:6px">Images (${withImgs ? S.selImgs.length : 0})</div>
+    <div style="display:flex;gap:6px;flex-wrap:wrap">${withImgs ? S.selImgs.map(u=>`<img src="${escHtml(u)}" style="width:54px;height:38px;object-fit:cover;border-radius:4px;border:1px solid var(--border)" onerror="this.style.display='none'">`).join('') : '<span style="color:var(--muted);font-size:0.78rem">Not included</span>'}</div></div>`;
 }
 
 async function doPublish() {
   const c = S.creds;
-  const title   = document.getElementById('rd-title').value.trim();
-  const bodyTxt = document.getElementById('rd-body').value.trim();
-  const sub     = (document.getElementById('compose-sub').value || c.rdSub || '').replace(/^r\//, '');
-  const slug    = S.selected?.slug || '';
-  const base    = (c.wfBaseUrl || '').replace(/\/$/, '');
-  const link    = slug ? `${base}/${slug}` : base;
-  const fullTxt = [bodyTxt, link ? `\n\n🔗 Full post: ${link}` : ''].filter(Boolean).join('');
+  const title    = document.getElementById('rd-title').value.trim();
+  const bodyTxt  = document.getElementById('rd-body').value.trim();
+  const sub      = (document.getElementById('compose-sub').value || c.rdSub || '').replace(/^r\//, '');
+  const slug     = S.selected ? getField(S.selected, 'slug') : '';
+  const base     = (c.wfBaseUrl || '').replace(/\/$/, '');
+  const link     = slug ? `${base}/${slug}` : base;
+  const fullText = [bodyTxt, link ? `\n\n🔗 Full post: ${link}` : ''].filter(Boolean).join('');
   if (!title) { toast('Post title is empty', 'err'); return; }
   if (!sub)   { toast('No subreddit set', 'err'); return; }
   const btn = document.getElementById('publish-btn');
-  btn.disabled = true;
-  btn.innerHTML = '<span class="spinner"></span> Publishing...';
+  btn.disabled = true; btn.innerHTML = '<span class="spinner"></span> Publishing...';
   addLog('i', 'Authenticating with Reddit...');
   try {
     const token = await window.api.redditAuth({ clientId: c.rdClientId, clientSecret: c.rdSecret, username: c.rdUser, password: c.rdPass });
     addLog('o', 'Auth successful ✓');
     addLog('i', `Submitting to r/${sub}...`);
-    await window.api.redditSubmit({ accessToken: token, subreddit: sub, title, text: fullTxt, username: c.rdUser });
+    await window.api.redditSubmit({ accessToken: token, subreddit: sub, title, text: fullText, username: c.rdUser });
     addLog('o', '🎉 Post published successfully!');
     toast('Published to Reddit! 🚀', 'ok');
-    btn.innerHTML = '✓ Published!';
-    btn.className = 'btn btn-ghost';
+    btn.innerHTML = '✓ Published!'; btn.className = 'btn btn-ghost';
   } catch(e) {
-    addLog('e', e.message);
-    toast('Failed: ' + e.message, 'err');
-    btn.disabled = false;
-    btn.innerHTML = '🚀 Retry';
+    addLog('e', e.message); toast('Failed: ' + e.message, 'err');
+    btn.disabled = false; btn.innerHTML = '🚀 Retry';
   }
 }
 
@@ -747,24 +1029,122 @@ function addLog(t, msg) {
   const row = document.createElement('div');
   row.className = 'log-row';
   row.innerHTML = `<span class="lt">${new Date().toLocaleTimeString()}</span><span class="${{i:'li',o:'lo',e:'le',w:'lw'}[t]||'li'}">${msg}</span>`;
-  box.appendChild(row);
-  box.scrollTop = box.scrollHeight;
+  box.appendChild(row); box.scrollTop = box.scrollHeight;
 }
 
-// TOAST
+// ─── UTILS ───────────────────────────────────────
+function escHtml(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
 let _tt;
 function toast(msg, type='i') {
   const el = document.getElementById('toast');
   el.textContent = msg;
   el.className = type==='ok'?'ok':type==='err'?'err':'';
   el.style.display = 'block';
-  clearTimeout(_tt);
-  _tt = setTimeout(() => el.style.display='none', 3000);
+  clearTimeout(_tt); _tt = setTimeout(() => el.style.display='none', 3000);
 }
 
-// INIT
+// ─── FIELD MAPPING ───────────────────────────────
+async function fetchFields() {
+  const token = document.getElementById('wf-token').value.trim() || S.creds.wfToken;
+  const collectionId = document.getElementById('wf-collid').value.trim() || S.creds.wfCollId;
+  if (!token || !collectionId) { toast('Enter Webflow token and Collection ID first', 'err'); return; }
+
+  const btn = document.getElementById('load-fields-btn');
+  btn.innerHTML = '<span class="spinner"></span> Loading…';
+  btn.disabled = true;
+
+  try {
+    const fields = await window.api.fetchFields({ token, collectionId });
+    S.collectionFields = fields;
+    renderFieldMapping(fields);
+    document.getElementById('field-mapping-card').style.display = 'block';
+    toast(`Loaded ${fields.length} fields`, 'ok');
+  } catch(e) {
+    toast('Could not load fields: ' + e.message, 'err');
+  } finally {
+    btn.innerHTML = '🗂️ Load Collection Fields';
+    btn.disabled = false;
+  }
+}
+
+function renderFieldMapping(fields) {
+  const m = S.creds.fieldMap || {};
+  const opts = (selected) => [
+    `<option value="">— not mapped —</option>`,
+    ...fields.map(f => `<option value="${f.slug}" ${m[selected]===f.slug||(!m[selected]&&guessField(selected,f))?'selected':''}>${f.name} <span style="opacity:.5">(${f.type})</span></option>`)
+  ].join('');
+
+  document.getElementById('field-mapping-body').innerHTML = `
+    <div class="two-col" style="gap:13px">
+      <div class="field">
+        <label>📌 Title Field</label>
+        <select id="map-title" onchange="saveFieldMap()">${opts('title')}</select>
+        <div class="hint">The main title/name of the post</div>
+      </div>
+      <div class="field">
+        <label>🖼️ Cover Image Field</label>
+        <select id="map-image" onchange="saveFieldMap()">${opts('image')}</select>
+        <div class="hint">Thumbnail or featured image</div>
+      </div>
+      <div class="field">
+        <label>📄 Content Field</label>
+        <select id="map-content" onchange="saveFieldMap()">${opts('content')}</select>
+        <div class="hint">Main body text for AI summary</div>
+      </div>
+      <div class="field">
+        <label>🔗 Slug / Link Field</label>
+        <select id="map-slug" onchange="saveFieldMap()">${opts('slug')}</select>
+        <div class="hint">Used to build the redirect link</div>
+      </div>
+    </div>`;
+}
+
+function guessField(role, f) {
+  const n = f.slug.toLowerCase();
+  const t = f.type?.toLowerCase() || '';
+  if (role === 'title')   return n.includes('name') || n.includes('title') || n === 'name';
+  if (role === 'image')   return t.includes('image') || n.includes('image') || n.includes('thumbnail') || n.includes('cover');
+  if (role === 'content') return t.includes('richtext') || t.includes('plain-text') || n.includes('body') || n.includes('content') || n.includes('summary');
+  if (role === 'slug')    return n === 'slug' || n.includes('slug');
+  return false;
+}
+
+async function saveFieldMap() {
+  const map = {
+    title:   document.getElementById('map-title')?.value   || '',
+    image:   document.getElementById('map-image')?.value   || '',
+    content: document.getElementById('map-content')?.value || '',
+    slug:    document.getElementById('map-slug')?.value    || '',
+  };
+  S.creds.fieldMap = map;
+  await window.api.saveCreds(S.creds);
+}
+
+function getField(post, role) {
+  const map = S.creds.fieldMap || {};
+  const key = map[role];
+  if (key && post[key] !== undefined) {
+    const val = post[key];
+    // image fields return an object with a url
+    if (val && typeof val === 'object' && val.url) return val.url;
+    return val || '';
+  }
+  // fallbacks
+  if (role === 'title')   return post.name || post['post-title'] || post['title'] || 'Untitled';
+  if (role === 'image')   return post['main-image']?.url || post['thumbnail']?.url || post['featured-image']?.url || '';
+  if (role === 'content') return post['post-body'] || post['body'] || post['content'] || post['post-summary'] || '';
+  if (role === 'slug')    return post.slug || '';
+  return '';
+}
+
+// ─── INIT ────────────────────────────────────────
 loadTheme();
-loadCreds();
+loadCreds().then(() => {
+  // auto-show field mapping if we have saved fields
+  if (S.creds.wfToken && S.creds.wfCollId) fetchFields();
+});
+loadDraftsFromDisk();
 </script>
 </body>
 </html>
