@@ -1,86 +1,71 @@
 # Webflow2Reddit
 
-A desktop app for Windows and Mac. Fetches any Webflow CMS collection, generates an AI summary, and posts it to Reddit — all in a few clicks. I hope this helps.
+A desktop app for Mac and Windows. Fetch any Webflow CMS item, generate an AI summary, and post it to Reddit — all in a few clicks.
+
+<p align="center">
+  <a href="https://github.com/itsdsd/webflow2reddit/releases/latest/download/Webflow2Reddit-1.2.0-arm64.dmg">
+    <img src="https://img.shields.io/badge/Download%20for%20Mac-DMG-black?style=for-the-badge&logo=apple&logoColor=white" alt="Download for Mac"/>
+  </a>
+  &nbsp;&nbsp;
+  <a href="https://github.com/itsdsd/webflow2reddit/releases/latest/download/Webflow2Reddit.Setup.1.2.0.exe">
+    <img src="https://img.shields.io/badge/Download%20for%20Windows-EXE-0078D4?style=for-the-badge&logo=windows&logoColor=white" alt="Download for Windows"/>
+  </a>
+</p>
+
+<p align="center">You can download the <strong>.dmg</strong> file for Mac or <strong>.exe</strong> version for Windows to install the desktop version of the app.</p>
 
 ---
-### You can download the .dmg file for mac or .exe version for windows to install the desktop version of the app.
 
-## First-Time Setup (do this once)
+## Download & Install
 
-### Step 1 — Install Node.js
-1. Go to **https://nodejs.org**
-2. Click the big green **"LTS"** button to download
-3. Run the installer — just keep clicking Next/Continue
+👉 **[Download the latest version here](../../releases/latest)**
 
-### Step 2 — Download the app files
-Download or clone this repository to a folder on your computer (e.g. `Desktop/webflow2reddit`).
+- **Mac** — download the `.dmg` file, open it, drag the app to your Applications folder
+- **Windows** — download the `.exe` file and run the installer
 
-### Step 3 — Install the app
-1. Open **Terminal** (Mac) or **Command Prompt** (Windows)
-2. Type the following and press Enter:
+No coding required. Just install and open like any other app.
+
+---
+
+## Getting Started
+
+When you first open the app, go to **Credentials** and enter your API keys. The app has a built-in **Setup Guide** (in the left sidebar) that walks you through getting each one step by step.
+
+You'll need:
+- **Webflow** — a free API token from your Webflow account
+- **Reddit** — a free app credential from your Reddit account
+- **Anthropic** — optional, only needed if you want AI-generated summaries
+
+Your credentials are saved locally on your computer only. They are never uploaded anywhere.
+
+---
+
+## How to Use
+
+1. Open the app and enter your credentials
+2. Go to **CMS Items** and click **Fetch Items**
+3. Select the item you want to post
+4. Go to **Compose** — hit **Generate Summary** for an AI-written post, or write your own
+5. Pick which images to include
+6. Go to **Publish** and hit **Publish to Reddit**
+
+---
+
+## For Developers
+
+Want to run from source or contribute?
 
 ```
-cd Desktop/webflow2reddit
+git clone https://github.com/itsdsd/webflow2reddit.git
+cd webflow2reddit
 npm install
-```
-
-Wait for it to finish (takes ~1 minute).
-
-### Step 4 — Run the app
-In the same Terminal/Command Prompt window, type:
-
-```
 npm start
 ```
 
-The app will open! 🎉
+Built with Electron. MIT licensed — free to use, modify and share.
 
 ---
 
-## Every Time You Use It
+## Credits
 
-1. Open Terminal / Command Prompt
-2. Navigate to the app folder: `cd Desktop/webflow2reddit`
-3. Type `npm start`
-
----
-
-## Getting Your API Keys
-
-The app has a built-in **Setup Guide** (click it in the left sidebar) with step-by-step instructions for:
-- **Webflow** — your API token and Collection ID
-- **Reddit** — creating an app to get Client ID and Secret
-- **Anthropic** — API key for AI summaries (optional)
-
-Your credentials are saved on your computer only. They are **never** sent anywhere except directly to Webflow, Reddit, and Anthropic.
-
-To clear your saved credentials, click the **"Clear Credentials"** button in the bottom-left of the app.
-
----
-
-## Building a Distributable App (optional)
-
-To create a `.exe` (Windows) or `.dmg` (Mac) that others can install without Node.js:
-
-**On Mac:**
-```
-npm run build-mac
-```
-
-**On Windows:**
-```
-npm run build-win
-```
-
-The installer will appear in the `dist/` folder.
-
----
-
-## Troubleshooting
-
-| Problem | Solution |
-|---|---|
-| `npm: command not found` | Node.js isn't installed — go back to Step 1 |
-| Webflow fetch fails | Double-check your API token and Collection ID in Credentials |
-| Reddit auth fails | Make sure your app type is set to "script" in Reddit preferences |
-| White screen on launch | Run `npm install` again, then `npm start` |
+Background photo by [Juan Pablo Serrano](https://www.pexels.com/@juanphotography) via [Pexels](https://www.pexels.com).
