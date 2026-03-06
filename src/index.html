@@ -1,0 +1,770 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta http-equiv="Content-Security-Policy" content="default-src 'self' https:; img-src 'self' https: data:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'">
+<title>Webflow2Reddit</title>
+<style>
+:root {
+  --font: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  --font-display: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  --bg: #0e0e0e;
+  --surface: #181818;
+  --surface2: #212121;
+  --border: #2c2c2c;
+  --accent: #ff4500;
+  --blue: #3b9eff;
+  --text: #efefef;
+  --muted: #585858;
+  --success: #22c55e;
+  --warn: #f59e0b;
+  --radius: 9px;
+  --shadow: 0 1px 4px rgba(0,0,0,0.35);
+}
+html.light {
+  --bg: #f4f3f1;
+  --surface: #ffffff;
+  --surface2: #eeede9;
+  --border: #dddbd6;
+  --text: #1c1b18;
+  --muted: #9c9a94;
+  --shadow: 0 1px 4px rgba(0,0,0,0.07);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden}
+body{
+  background:var(--bg);color:var(--text);
+  font-family:var(--font);
+  font-size:14px;line-height:1.5;
+  display:flex;flex-direction:column;
+  -webkit-font-smoothing:antialiased;
+  user-select:none;
+  transition:background 0.18s,color 0.18s;
+}
+
+/* TITLEBAR */
+.titlebar{
+  height:44px;background:var(--surface);
+  border-bottom:1px solid var(--border);
+  display:flex;align-items:center;padding:0 16px;
+  -webkit-app-region:drag;flex-shrink:0;
+  transition:background 0.18s,border-color 0.18s;
+}
+.titlebar-title{
+  font-family:var(--font-display);font-size:0.72rem;font-weight:800;
+  letter-spacing:0.16em;text-transform:uppercase;
+  display:flex;align-items:center;gap:8px;
+  flex:1;justify-content:center;
+}
+.dot{width:7px;height:7px;background:var(--accent);border-radius:50%;animation:pulse 2.5s infinite;flex-shrink:0;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.3}}
+.theme-btn{
+  -webkit-app-region:no-drag;
+  background:none;border:1px solid var(--border);border-radius:8px;
+  padding:5px 10px;font-size:1rem;line-height:1;
+  cursor:pointer;transition:all 0.15s;width:36px;height:28px;
+  display:flex;align-items:center;justify-content:center;
+  pointer-events:all;
+  position:relative;
+  z-index:10;
+}
+.theme-btn *{ -webkit-app-region:no-drag; pointer-events:none; }
+.theme-btn:hover{border-color:var(--text);}
+
+/* LAYOUT */
+.app{display:flex;flex:1;overflow:hidden;}
+
+/* SIDEBAR */
+.sidebar{
+  width:196px;flex-shrink:0;
+  background:var(--surface);border-right:1px solid var(--border);
+  display:flex;flex-direction:column;padding:14px 0;
+  transition:background 0.18s,border-color 0.18s;
+}
+.sidebar-label{
+  font-size:0.62rem;font-weight:700;letter-spacing:0.1em;
+  text-transform:uppercase;color:var(--muted);
+  padding:0 16px;margin:14px 0 4px;
+}
+.sidebar-label:first-child{margin-top:0;}
+.nav-item{
+  display:flex;align-items:center;gap:9px;
+  padding:9px 16px;font-size:0.84rem;font-weight:500;color:var(--muted);
+  cursor:pointer;border-left:2px solid transparent;transition:all 0.13s;
+  -webkit-app-region:no-drag;
+}
+.nav-item:hover{color:var(--text);background:rgba(128,128,128,0.07);}
+.nav-item.active{color:var(--text);border-left-color:var(--accent);background:rgba(255,69,0,0.07);}
+.nav-icon{font-size:0.9rem;width:18px;text-align:center;flex-shrink:0;}
+.sidebar-bottom{margin-top:auto;padding:12px 14px;border-top:1px solid var(--border);}
+.creds-badge{
+  font-size:0.7rem;font-weight:600;padding:5px 10px;border-radius:20px;
+  border:1px solid var(--border);color:var(--muted);text-align:center;margin-bottom:8px;
+}
+.creds-badge.ok{border-color:var(--success);color:var(--success);}
+
+/* CONTENT */
+.content{flex:1;overflow-y:auto;padding:28px 30px 40px;}
+.content::-webkit-scrollbar{width:4px;}
+.content::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px;}
+
+/* PANELS */
+.panel{display:none;animation:fadeIn 0.2s ease;}
+.panel.active{display:block;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+
+.page-title{
+  font-family:var(--font-display);font-size:1.45rem;font-weight:800;
+  letter-spacing:-0.02em;margin-bottom:4px;
+}
+.page-sub{font-size:0.82rem;color:var(--muted);margin-bottom:22px;line-height:1.6;font-weight:400;}
+
+/* CARD */
+.card{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--radius);padding:18px 20px;margin-bottom:14px;
+  box-shadow:var(--shadow);transition:background 0.18s,border-color 0.18s;
+}
+.card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
+.card-label{font-size:0.68rem;font-weight:700;text-transform:uppercase;letter-spacing:0.09em;color:var(--muted);}
+.card-label em{color:var(--text);font-style:normal;}
+
+/* FORM */
+.field{margin-bottom:13px;}
+.field:last-child{margin-bottom:0;}
+label{display:block;font-size:0.74rem;font-weight:600;color:var(--muted);margin-bottom:5px;}
+input,textarea,select{
+  width:100%;background:var(--bg);border:1px solid var(--border);border-radius:6px;
+  color:var(--text);font-family:var(--font);font-size:0.85rem;font-weight:400;
+  padding:8px 11px;outline:none;transition:border-color 0.14s,background 0.18s;
+}
+input:focus,textarea:focus,select:focus{border-color:var(--blue);}
+input::placeholder,textarea::placeholder{color:var(--muted);font-weight:400;}
+input[type=password]{letter-spacing:0.06em;}
+textarea{resize:vertical;min-height:88px;line-height:1.6;}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:13px;}
+.hint{font-size:0.72rem;color:var(--muted);margin-top:4px;line-height:1.5;font-weight:400;}
+.hint code{background:var(--surface2);padding:1px 5px;border-radius:3px;color:var(--blue);font-size:0.7rem;}
+
+/* BUTTONS */
+.btn{
+  padding:8px 16px;border-radius:6px;border:none;
+  font-family:var(--font);font-size:0.82rem;font-weight:600;
+  cursor:pointer;letter-spacing:0.01em;transition:all 0.12s;
+  display:inline-flex;align-items:center;gap:6px;
+  -webkit-app-region:no-drag;
+}
+.btn:disabled{opacity:0.35;cursor:not-allowed;transform:none!important;}
+.btn-primary{background:var(--accent);color:#fff;}
+.btn-primary:hover:not(:disabled){background:#e03e00;transform:translateY(-1px);}
+.btn-blue{background:var(--blue);color:#fff;}
+.btn-blue:hover:not(:disabled){background:#2a8ef5;transform:translateY(-1px);}
+.btn-ghost{background:transparent;color:var(--muted);border:1px solid var(--border);}
+.btn-ghost:hover:not(:disabled){color:var(--text);border-color:var(--text);}
+.btn-danger{background:transparent;color:#ef4444;border:1px solid rgba(239,68,68,0.25);}
+.btn-danger:hover:not(:disabled){background:rgba(239,68,68,0.06);border-color:#ef4444;}
+.btn-success{background:var(--success);color:#000;font-weight:700;}
+.btn-success:hover:not(:disabled){background:#16a34a;}
+.btn-sm{padding:5px 11px;font-size:0.74rem;}
+.btn-row{display:flex;gap:10px;margin-top:20px;align-items:center;}
+
+/* ITEM LIST */
+.item-list{display:flex;flex-direction:column;gap:7px;}
+.item-row{
+  background:var(--bg);border:1px solid var(--border);
+  border-radius:7px;padding:11px 13px;
+  display:flex;align-items:center;gap:11px;
+  cursor:pointer;transition:all 0.12s;-webkit-app-region:no-drag;
+}
+.item-row:hover{border-color:var(--blue);}
+.item-row.selected{border-color:var(--accent);background:rgba(255,69,0,0.05);}
+.item-thumb{width:56px;height:38px;border-radius:4px;object-fit:cover;flex-shrink:0;border:1px solid var(--border);background:var(--surface2);}
+.item-thumb-empty{width:56px;height:38px;border-radius:4px;background:var(--surface2);border:1px solid var(--border);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:1rem;}
+.item-info{flex:1;min-width:0;}
+.item-name{font-size:0.85rem;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:2px;}
+.item-meta{font-size:0.7rem;color:var(--muted);font-weight:400;}
+.item-check{width:18px;height:18px;border-radius:50%;border:1.5px solid var(--border);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:0.6rem;transition:all 0.12s;}
+.item-row.selected .item-check{background:var(--accent);border-color:var(--accent);color:#fff;}
+
+/* IMAGE GRID */
+.img-grid{display:flex;gap:7px;flex-wrap:wrap;}
+.img-cell{position:relative;width:74px;height:52px;border-radius:5px;overflow:hidden;border:2px solid var(--border);cursor:pointer;transition:border-color 0.12s;}
+.img-cell.on{border-color:var(--accent);}
+.img-cell img{width:100%;height:100%;object-fit:cover;display:block;}
+.img-tick{position:absolute;top:3px;right:3px;width:14px;height:14px;background:var(--accent);border-radius:50%;display:none;align-items:center;justify-content:center;font-size:0.5rem;color:#fff;}
+.img-cell.on .img-tick{display:flex;}
+
+/* REDDIT MOCK */
+.reddit-mock{background:#1a1a1b;border:1px solid #343536;border-radius:5px;overflow:hidden;font-family:var(--font);}
+.reddit-mock-head{padding:8px 12px;font-size:0.7rem;color:#818384;border-bottom:1px solid #343536;}
+.reddit-mock-head strong{color:var(--accent);}
+.reddit-mock-body{padding:12px;}
+.reddit-mock-title{font-size:0.95rem;font-weight:700;color:#d7dadc;margin-bottom:7px;line-height:1.35;}
+.reddit-mock-text{font-size:0.8rem;color:#9a9a9a;line-height:1.6;white-space:pre-wrap;}
+.reddit-mock-link{color:#4fbdff;font-size:0.72rem;margin-top:8px;display:block;}
+.reddit-mock-imgs{display:flex;gap:5px;margin-top:8px;flex-wrap:wrap;}
+.reddit-mock-imgs img{width:66px;height:48px;object-fit:cover;border-radius:3px;}
+.reddit-mock-foot{padding:7px 12px;border-top:1px solid #343536;font-size:0.66rem;color:#818384;display:flex;gap:12px;}
+
+/* LOG */
+.log{
+  background:var(--bg);border:1px solid var(--border);border-radius:6px;
+  padding:11px 13px;height:148px;overflow-y:auto;
+  font-size:0.78rem;line-height:1.8;font-family:var(--font);
+  transition:background 0.18s;
+}
+.log::-webkit-scrollbar{width:3px;}
+.log::-webkit-scrollbar-thumb{background:var(--border);}
+.log-row{display:flex;gap:10px;}
+.lt{color:var(--muted);flex-shrink:0;}
+.li{color:var(--blue);}.lo{color:var(--success);}.le{color:var(--accent);}.lw{color:var(--warn);}
+
+/* MISC */
+.progress{height:2px;background:var(--border);border-radius:2px;overflow:hidden;margin:10px 0;}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--blue));width:0;transition:width 0.35s ease;}
+.spinner{width:12px;height:12px;border-radius:50%;border:2px solid rgba(255,255,255,0.15);border-top-color:#fff;animation:spin 0.65s linear infinite;display:inline-block;}
+@keyframes spin{to{transform:rotate(360deg)}}
+.empty{color:var(--muted);font-size:0.8rem;padding:20px 0;text-align:center;font-weight:400;}
+
+/* GUIDE */
+.guide-step{display:flex;gap:14px;padding:14px 0;border-bottom:1px solid var(--border);}
+.guide-step:last-child{border-bottom:none;}
+.guide-num{width:26px;height:26px;background:var(--surface2);border:1px solid var(--border);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:0.72rem;font-weight:800;font-family:var(--font-display);flex-shrink:0;color:var(--accent);}
+.guide-body h4{font-size:0.88rem;font-weight:700;margin-bottom:4px;}
+.guide-body p{font-size:0.8rem;color:var(--muted);line-height:1.65;font-weight:400;}
+.guide-body p strong{color:var(--text);font-weight:600;}
+.guide-body code{background:var(--surface2);padding:1px 5px;border-radius:3px;color:var(--blue);font-size:0.76rem;}
+.guide-link{color:var(--blue);cursor:pointer;font-weight:500;text-decoration:underline;}
+.guide-link:hover{opacity:0.8;}
+
+/* TOAST */
+#toast{
+  position:fixed;bottom:20px;right:20px;
+  background:var(--surface2);border:1px solid var(--border);
+  border-radius:8px;padding:10px 16px;font-size:0.8rem;font-weight:500;
+  display:none;z-index:999;max-width:280px;
+  animation:slideUp 0.18s ease;font-family:var(--font);
+}
+#toast.ok{border-color:var(--success);}
+#toast.err{border-color:var(--accent);}
+@keyframes slideUp{from{transform:translateY(8px);opacity:0}to{transform:none;opacity:1}}
+</style>
+</head>
+<body>
+
+<div class="titlebar">
+  <div style="width:100px"></div>
+  <div class="titlebar-title"><span class="dot"></span> WEBFLOW2REDDIT</div>
+  <button id="theme-btn" style="-webkit-app-region:no-drag;cursor:pointer;font-size:1.1rem;background:none;border:1px solid #555;border-radius:6px;padding:4px 8px;" onclick="toggleTheme()">☀️</button>
+</div>
+
+<div class="app">
+  <nav class="sidebar">
+    <div class="sidebar-label">Workflow</div>
+    <div class="nav-item active" id="nav-credentials" onclick="nav('credentials')"><span class="nav-icon">🔑</span> Credentials</div>
+    <div class="nav-item" id="nav-posts" onclick="nav('posts')"><span class="nav-icon">📄</span> CMS Items</div>
+    <div class="nav-item" id="nav-compose" onclick="nav('compose')"><span class="nav-icon">✍️</span> Compose</div>
+    <div class="nav-item" id="nav-publish" onclick="nav('publish')"><span class="nav-icon">🚀</span> Publish</div>
+    <div class="sidebar-label">Help</div>
+    <div class="nav-item" id="nav-guide" onclick="nav('guide')"><span class="nav-icon">📖</span> Setup Guide</div>
+    <div class="sidebar-bottom">
+      <div class="creds-badge" id="creds-badge">Not configured</div>
+      <button class="btn btn-danger btn-sm" style="width:100%;justify-content:center;" onclick="clearAllCreds()">🗑 Clear Credentials</button>
+    </div>
+  </nav>
+
+  <div class="content">
+
+    <!-- CREDENTIALS -->
+    <div class="panel active" id="panel-credentials">
+      <div class="page-title">Credentials</div>
+      <div class="page-sub">Saved locally on your machine — never sent anywhere except directly to Webflow, Reddit, and Anthropic.</div>
+
+      <div class="card">
+        <div class="card-label" style="margin-bottom:14px">🌐 <em>Webflow</em></div>
+        <div class="two-col">
+          <div class="field">
+            <label>API Token</label>
+            <input type="password" id="wf-token" placeholder="••••••••••••••••"/>
+            <div class="hint">Account → Integrations → API Access</div>
+          </div>
+          <div class="field">
+            <label>Collection ID</label>
+            <input type="text" id="wf-collid" placeholder="5f4dbc..."/>
+            <div class="hint">CMS → your collection → URL bar</div>
+          </div>
+        </div>
+        <div class="field">
+          <label>Site Base URL</label>
+          <input type="text" id="wf-baseurl" placeholder="https://yoursite.com"/>
+          <div class="hint">Used to build links back to each post</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-label" style="margin-bottom:14px">🔴 <em>Reddit</em></div>
+        <div class="two-col">
+          <div class="field"><label>Client ID</label><input type="text" id="rd-clientid" placeholder="abc123xyz"/></div>
+          <div class="field"><label>Client Secret</label><input type="password" id="rd-secret" placeholder="••••••••••••••••"/></div>
+        </div>
+        <div class="two-col">
+          <div class="field"><label>Username</label><input type="text" id="rd-user" placeholder="your_reddit_name"/></div>
+          <div class="field"><label>Password</label><input type="password" id="rd-pass" placeholder="••••••••••••••••"/></div>
+        </div>
+        <div class="field">
+          <label>Default Subreddit</label>
+          <input type="text" id="rd-sub" placeholder="r/mysubreddit"/>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-label" style="margin-bottom:14px">🤖 <em>Anthropic — AI Summaries</em></div>
+        <div class="field">
+          <label>API Key</label>
+          <input type="password" id="claude-key" placeholder="sk-ant-••••••••••••••••"/>
+          <div class="hint">Get yours at console.anthropic.com → API Keys</div>
+        </div>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn btn-primary" onclick="saveCreds()">💾 Save Credentials</button>
+        <span id="save-ok" style="font-size:0.78rem;color:var(--success);display:none;font-weight:600;">✓ Saved!</span>
+      </div>
+    </div>
+
+    <!-- CMS ITEMS -->
+    <div class="panel" id="panel-posts">
+      <div class="page-title">CMS Items</div>
+      <div class="page-sub">Fetch your Webflow collection and pick an item to publish.</div>
+      <div class="card">
+        <div class="card-header">
+          <div class="card-label">📄 <em>Webflow Collection</em></div>
+          <button class="btn btn-blue btn-sm" id="fetch-btn" onclick="fetchPosts()">↺ Fetch Items</button>
+        </div>
+        <div class="progress" id="fetch-prog" style="display:none"><div class="progress-fill" id="fetch-fill"></div></div>
+        <div class="item-list" id="item-list"><div class="empty">Click "Fetch Items" to load your Webflow collection.</div></div>
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-primary" id="btn-to-compose" onclick="nav('compose')" disabled>Next: Compose →</button>
+      </div>
+    </div>
+
+    <!-- COMPOSE -->
+    <div class="panel" id="panel-compose">
+      <div class="page-title">Compose</div>
+      <div class="page-sub">Generate an AI summary or write your own. Everything is editable.</div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-label">✨ <em>Post Content</em></div>
+          <button class="btn btn-blue btn-sm" id="gen-btn" onclick="generateSummary()">⚡ Generate Summary</button>
+        </div>
+        <div class="field"><label>Reddit Post Title</label><input type="text" id="rd-title" placeholder="Your post title..." oninput="updatePreview()"/></div>
+        <div class="field"><label>Post Body</label><textarea id="rd-body" rows="5" placeholder="AI summary appears here, or type your own..." oninput="updatePreview()"></textarea></div>
+        <div class="field"><label>Subreddit</label><input type="text" id="compose-sub" placeholder="r/subreddit" oninput="updatePreview()"/></div>
+      </div>
+
+      <div class="card">
+        <div class="card-label">🖼️ <em>Images</em> &nbsp;<span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--muted);font-size:0.72rem">Click to toggle</span></div>
+        <div style="height:12px"></div>
+        <div class="img-grid" id="img-grid"><div class="empty" style="width:100%">No images found in selected item.</div></div>
+      </div>
+
+      <div class="card">
+        <div class="card-label" style="margin-bottom:12px">👁️ <em>Reddit Preview</em></div>
+        <div class="reddit-mock">
+          <div class="reddit-mock-head">Posted by <strong id="prev-user">u/you</strong> in <strong id="prev-sub" style="color:var(--blue)">r/subreddit</strong></div>
+          <div class="reddit-mock-body">
+            <div class="reddit-mock-title" id="prev-title">Your title here</div>
+            <div class="reddit-mock-text" id="prev-body"></div>
+            <span class="reddit-mock-link" id="prev-link">🔗 Read full post</span>
+            <div class="reddit-mock-imgs" id="prev-imgs"></div>
+          </div>
+          <div class="reddit-mock-foot"><span>⬆ 0</span><span>💬 0 comments</span><span>🔗 Share</span></div>
+        </div>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn btn-ghost" onclick="nav('posts')">← Back</button>
+        <button class="btn btn-primary" onclick="nav('publish')">Review & Publish →</button>
+      </div>
+    </div>
+
+    <!-- PUBLISH -->
+    <div class="panel" id="panel-publish">
+      <div class="page-title">Publish</div>
+      <div class="page-sub">Final review. Hit publish when ready.</div>
+      <div class="card">
+        <div class="card-label" style="margin-bottom:12px">📋 <em>Summary</em></div>
+        <div id="final-content" style="font-size:0.84rem;line-height:1.7;"></div>
+      </div>
+      <div class="card">
+        <div class="card-label" style="margin-bottom:12px">📡 <em>Activity Log</em></div>
+        <div class="log" id="log">
+          <div class="log-row"><span class="lt">--:--</span><span class="li">Ready — press Publish when ready.</span></div>
+        </div>
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-ghost" onclick="nav('compose')">← Back</button>
+        <button class="btn btn-success" id="publish-btn" onclick="doPublish()">🚀 Publish to Reddit</button>
+      </div>
+    </div>
+
+    <!-- SETUP GUIDE -->
+    <div class="panel" id="panel-guide">
+      <div class="page-title">Setup Guide</div>
+      <div class="page-sub">Step-by-step instructions to get all your API keys.</div>
+
+      <div class="card">
+        <div class="card-label" style="margin-bottom:4px">🌐 <em>Webflow</em></div>
+        <div class="guide-step">
+          <div class="guide-num">1</div>
+          <div class="guide-body">
+            <h4>Generate a Webflow API Token</h4>
+            <p>Go to <span class="guide-link" onclick="window.api.openExternal('https://webflow.com/dashboard')">webflow.com/dashboard</span> → click your avatar → <strong>Account Settings</strong> → <strong>Integrations</strong> → <strong>API Access</strong> → <strong>Generate API Token</strong>. Copy it immediately — it only shows once.</p>
+          </div>
+        </div>
+        <div class="guide-step">
+          <div class="guide-num">2</div>
+          <div class="guide-body">
+            <h4>Find your Collection ID</h4>
+            <p>In Webflow → <strong>CMS</strong> → click your collection → look at the browser URL. The ID appears after <code>/collections/</code>.</p>
+          </div>
+        </div>
+        <div class="guide-step">
+          <div class="guide-num">3</div>
+          <div class="guide-body">
+            <h4>Your site base URL</h4>
+            <p>Your published site address, e.g. <code>https://yoursite.com</code>. Used to build the link included in your Reddit post.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-label" style="margin-bottom:4px">🔴 <em>Reddit</em></div>
+        <div class="guide-step">
+          <div class="guide-num">1</div>
+          <div class="guide-body">
+            <h4>Create a Reddit App</h4>
+            <p>Go to <span class="guide-link" onclick="window.api.openExternal('https://www.reddit.com/prefs/apps')">reddit.com/prefs/apps</span> → scroll to the bottom → click <strong>"create another app"</strong>.</p>
+          </div>
+        </div>
+        <div class="guide-step">
+          <div class="guide-num">2</div>
+          <div class="guide-body">
+            <h4>Fill in the form</h4>
+            <p><strong>Name:</strong> anything (e.g. Webflow2Reddit)<br/><strong>Type:</strong> select <code>script</code><br/><strong>Redirect URI:</strong> <code>http://localhost:8080</code><br/>Then click <strong>Create App</strong>.</p>
+          </div>
+        </div>
+        <div class="guide-step">
+          <div class="guide-num">3</div>
+          <div class="guide-body">
+            <h4>Copy your credentials</h4>
+            <p>The <strong>Client ID</strong> is the short string directly under your app name. The <strong>Client Secret</strong> is labeled "secret". Use your normal Reddit username and password for the other fields.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-label" style="margin-bottom:4px">🤖 <em>Anthropic — optional</em></div>
+        <div class="guide-step">
+          <div class="guide-num">1</div>
+          <div class="guide-body">
+            <h4>Get an API Key</h4>
+            <p>Sign up at <span class="guide-link" onclick="window.api.openExternal('https://console.anthropic.com')">console.anthropic.com</span> → go to <strong>API Keys</strong> → click <strong>Create Key</strong>. Free credits are included when you sign up.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+// THEME
+function applyTheme(light) {
+  document.documentElement.classList.toggle('light', light);
+  document.getElementById('theme-btn').textContent = light ? '🌙' : '☀️';
+}
+function toggleTheme() {
+  const light = document.documentElement.classList.toggle('light');
+  document.getElementById('theme-btn').textContent = light ? '🌙' : '☀️';
+  window.api.saveTheme(light ? 'light' : 'dark');
+}
+async function loadTheme() {
+  try {
+    const t = await window.api.loadTheme();
+    if (t === 'light') applyTheme(true);
+  } catch(e) {}
+}
+
+// STATE
+const S = { creds: {}, posts: [], selected: null, selImgs: [] };
+
+// NAV
+function nav(id) {
+  if (id === 'compose' && !S.selected) { toast('Select a CMS item first', 'err'); return; }
+  if (id === 'publish') buildFinalPreview();
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('panel-' + id).classList.add('active');
+  document.getElementById('nav-' + id).classList.add('active');
+}
+
+// CREDENTIALS
+async function loadCreds() {
+  try {
+    const c = await window.api.loadCreds();
+    if (!c) return;
+    S.creds = c;
+    document.getElementById('wf-token').value    = c.wfToken    || '';
+    document.getElementById('wf-collid').value   = c.wfCollId   || '';
+    document.getElementById('wf-baseurl').value  = c.wfBaseUrl  || '';
+    document.getElementById('rd-clientid').value = c.rdClientId || '';
+    document.getElementById('rd-secret').value   = c.rdSecret   || '';
+    document.getElementById('rd-user').value     = c.rdUser     || '';
+    document.getElementById('rd-pass').value     = c.rdPass     || '';
+    document.getElementById('rd-sub').value      = c.rdSub      || '';
+    document.getElementById('claude-key').value  = c.claudeKey  || '';
+    document.getElementById('compose-sub').value = c.rdSub      || '';
+    refreshBadge();
+  } catch(e) {}
+}
+
+async function saveCreds() {
+  const c = {
+    wfToken:    document.getElementById('wf-token').value.trim(),
+    wfCollId:   document.getElementById('wf-collid').value.trim(),
+    wfBaseUrl:  document.getElementById('wf-baseurl').value.trim(),
+    rdClientId: document.getElementById('rd-clientid').value.trim(),
+    rdSecret:   document.getElementById('rd-secret').value.trim(),
+    rdUser:     document.getElementById('rd-user').value.trim(),
+    rdPass:     document.getElementById('rd-pass').value,
+    rdSub:      document.getElementById('rd-sub').value.trim(),
+    claudeKey:  document.getElementById('claude-key').value.trim(),
+  };
+  await window.api.saveCreds(c);
+  S.creds = c;
+  document.getElementById('compose-sub').value = c.rdSub || '';
+  const ok = document.getElementById('save-ok');
+  ok.style.display = 'inline';
+  setTimeout(() => ok.style.display = 'none', 2500);
+  refreshBadge();
+  toast('Credentials saved ✓', 'ok');
+}
+
+async function clearAllCreds() {
+  if (!confirm('Clear all saved credentials? This cannot be undone.')) return;
+  await window.api.clearCreds();
+  S.creds = {};
+  ['wf-token','wf-collid','wf-baseurl','rd-clientid','rd-secret','rd-user','rd-pass','rd-sub','claude-key']
+    .forEach(id => document.getElementById(id).value = '');
+  refreshBadge();
+  toast('Credentials cleared', 'ok');
+}
+
+function refreshBadge() {
+  const c = S.creds;
+  const ok = c.wfToken && c.wfCollId && c.rdClientId && c.rdSecret && c.rdUser && c.rdPass && c.rdSub;
+  const el = document.getElementById('creds-badge');
+  el.textContent = ok ? '✓ Configured' : 'Not configured';
+  el.className = 'creds-badge' + (ok ? ' ok' : '');
+}
+
+// FETCH ITEMS
+async function fetchPosts() {
+  const { wfToken, wfCollId } = S.creds;
+  if (!wfToken || !wfCollId) { toast('Save Webflow credentials first', 'err'); nav('credentials'); return; }
+  const btn = document.getElementById('fetch-btn');
+  const prog = document.getElementById('fetch-prog');
+  const fill = document.getElementById('fetch-fill');
+  btn.innerHTML = '<span class="spinner"></span> Loading...';
+  btn.disabled = true;
+  prog.style.display = 'block';
+  fill.style.width = '40%';
+  try {
+    const data = await window.api.fetchPosts({ token: wfToken, collectionId: wfCollId });
+    fill.style.width = '100%';
+    S.posts = data.items || [];
+    renderItems();
+    toast(`Loaded ${S.posts.length} items`, 'ok');
+  } catch(e) {
+    toast('Webflow error: ' + e.message, 'err');
+    document.getElementById('item-list').innerHTML = `<div class="empty" style="color:var(--accent)">${e.message}</div>`;
+  } finally {
+    btn.innerHTML = '↺ Refresh';
+    btn.disabled = false;
+    setTimeout(() => { prog.style.display='none'; fill.style.width='0%'; }, 600);
+  }
+}
+
+function renderItems() {
+  const list = document.getElementById('item-list');
+  if (!S.posts.length) { list.innerHTML = '<div class="empty">No items found.</div>'; return; }
+  list.innerHTML = S.posts.map((p, i) => {
+    const img  = p['main-image']?.url || p['thumbnail']?.url || p['featured-image']?.url || '';
+    const date = p['published-on'] || p['created-on'] || '';
+    const name = p.name || p['post-title'] || p['title'] || 'Untitled';
+    return `<div class="item-row" id="ir${i}" onclick="selectItem(${i})">
+      ${img ? `<img class="item-thumb" src="${img}" onerror="this.style.display='none'">` : `<div class="item-thumb-empty">📄</div>`}
+      <div class="item-info">
+        <div class="item-name">${name}</div>
+        <div class="item-meta">${date ? new Date(date).toLocaleDateString() : ''}${p.slug ? ' · /'+p.slug : ''}</div>
+      </div>
+      <div class="item-check">✓</div>
+    </div>`;
+  }).join('');
+}
+
+function selectItem(i) {
+  S.selected = S.posts[i];
+  document.querySelectorAll('.item-row').forEach((el, j) => el.classList.toggle('selected', j === i));
+  document.getElementById('btn-to-compose').disabled = false;
+  document.getElementById('rd-title').value = S.selected.name || S.selected['post-title'] || S.selected['title'] || '';
+  extractImages(S.selected);
+  updatePreview();
+}
+
+function extractImages(post) {
+  const urls = new Set();
+  for (const v of Object.values(post)) {
+    if (v?.url && /\.(jpg|jpeg|png|gif|webp)/i.test(v.url)) urls.add(v.url);
+    if (typeof v === 'string' && /^https?:\/\/.+\.(jpg|jpeg|png|webp)/i.test(v)) urls.add(v);
+  }
+  const body = post['post-body'] || post['body'] || post['content'] || '';
+  for (const m of body.matchAll(/src="([^"]+\.(jpg|jpeg|png|gif|webp)[^"]*)"/gi)) urls.add(m[1]);
+  const arr = [...urls].slice(0, 8);
+  S.selImgs = arr.slice(0, 3);
+  const grid = document.getElementById('img-grid');
+  if (!arr.length) { grid.innerHTML = '<div class="empty" style="width:100%">No images found.</div>'; return; }
+  grid.innerHTML = arr.map((url, i) => `
+    <div class="img-cell ${i < 3 ? 'on' : ''}" onclick="toggleImg(this,'${url}')">
+      <img src="${url}" onerror="this.parentElement.style.display='none'">
+      <div class="img-tick">✓</div>
+    </div>`).join('');
+}
+
+function toggleImg(el, url) {
+  el.classList.toggle('on');
+  if (el.classList.contains('on')) S.selImgs.push(url);
+  else S.selImgs = S.selImgs.filter(u => u !== url);
+  updatePreview();
+}
+
+// AI SUMMARY
+async function generateSummary() {
+  if (!S.selected) { toast('Select a CMS item first', 'err'); return; }
+  const key = S.creds.claudeKey;
+  if (!key) { toast('No Anthropic API key saved', 'err'); nav('credentials'); return; }
+  const btn = document.getElementById('gen-btn');
+  btn.innerHTML = '<span class="spinner"></span> Generating...';
+  btn.disabled = true;
+  const post = S.selected;
+  const title = post.name || post['post-title'] || post['title'] || '';
+  const raw = post['post-body'] || post['body'] || post['content'] || post['post-summary'] || '';
+  const content = raw.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
+  try {
+    const text = await window.api.generateSummary({ apiKey: key, title, content });
+    document.getElementById('rd-body').value = text;
+    updatePreview();
+    toast('Summary generated!', 'ok');
+  } catch(e) {
+    toast('AI error: ' + e.message, 'err');
+  } finally {
+    btn.innerHTML = '⚡ Regenerate';
+    btn.disabled = false;
+  }
+}
+
+// PREVIEW
+function updatePreview() {
+  const user   = (S.creds.rdUser || 'you').replace(/^u\//, '');
+  const sub    = document.getElementById('compose-sub').value || S.creds.rdSub || 'subreddit';
+  const title  = document.getElementById('rd-title').value;
+  const body   = document.getElementById('rd-body').value;
+  const slug   = S.selected?.slug || '';
+  const base   = (S.creds.wfBaseUrl || 'https://yoursite.com').replace(/\/$/, '');
+  const link   = slug ? `${base}/${slug}` : base;
+  const subFmt = sub.startsWith('r/') ? sub : 'r/' + sub;
+  document.getElementById('prev-user').textContent  = 'u/' + user;
+  document.getElementById('prev-sub').textContent   = subFmt;
+  document.getElementById('prev-title').textContent = title || 'Your title here';
+  document.getElementById('prev-body').textContent  = body || '';
+  document.getElementById('prev-link').textContent  = '🔗 ' + link;
+  document.getElementById('prev-imgs').innerHTML = S.selImgs.slice(0, 4)
+    .map(u => `<img src="${u}" onerror="this.style.display='none'">`).join('');
+}
+
+// FINAL PREVIEW & PUBLISH
+function buildFinalPreview() {
+  const title = document.getElementById('rd-title').value;
+  const body  = document.getElementById('rd-body').value;
+  const sub   = document.getElementById('compose-sub').value || S.creds.rdSub || '';
+  document.getElementById('final-content').innerHTML = `
+    <div style="margin-bottom:10px"><div style="font-size:0.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:3px">Subreddit</div><strong>${sub||'—'}</strong></div>
+    <div style="margin-bottom:10px"><div style="font-size:0.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:3px">Title</div><strong>${title||'—'}</strong></div>
+    <div style="margin-bottom:10px"><div style="font-size:0.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:3px">Body</div><span style="white-space:pre-wrap;font-size:0.82rem">${body||'—'}</span></div>
+    <div><div style="font-size:0.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:6px">Images (${S.selImgs.length})</div>
+    <div style="display:flex;gap:6px;flex-wrap:wrap">${S.selImgs.map(u=>`<img src="${u}" style="width:54px;height:38px;object-fit:cover;border-radius:4px;border:1px solid var(--border)" onerror="this.style.display='none'">`).join('')}</div></div>`;
+}
+
+async function doPublish() {
+  const c = S.creds;
+  const title   = document.getElementById('rd-title').value.trim();
+  const bodyTxt = document.getElementById('rd-body').value.trim();
+  const sub     = (document.getElementById('compose-sub').value || c.rdSub || '').replace(/^r\//, '');
+  const slug    = S.selected?.slug || '';
+  const base    = (c.wfBaseUrl || '').replace(/\/$/, '');
+  const link    = slug ? `${base}/${slug}` : base;
+  const fullTxt = [bodyTxt, link ? `\n\n🔗 Full post: ${link}` : ''].filter(Boolean).join('');
+  if (!title) { toast('Post title is empty', 'err'); return; }
+  if (!sub)   { toast('No subreddit set', 'err'); return; }
+  const btn = document.getElementById('publish-btn');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span> Publishing...';
+  addLog('i', 'Authenticating with Reddit...');
+  try {
+    const token = await window.api.redditAuth({ clientId: c.rdClientId, clientSecret: c.rdSecret, username: c.rdUser, password: c.rdPass });
+    addLog('o', 'Auth successful ✓');
+    addLog('i', `Submitting to r/${sub}...`);
+    await window.api.redditSubmit({ accessToken: token, subreddit: sub, title, text: fullTxt, username: c.rdUser });
+    addLog('o', '🎉 Post published successfully!');
+    toast('Published to Reddit! 🚀', 'ok');
+    btn.innerHTML = '✓ Published!';
+    btn.className = 'btn btn-ghost';
+  } catch(e) {
+    addLog('e', e.message);
+    toast('Failed: ' + e.message, 'err');
+    btn.disabled = false;
+    btn.innerHTML = '🚀 Retry';
+  }
+}
+
+function addLog(t, msg) {
+  const box = document.getElementById('log');
+  const row = document.createElement('div');
+  row.className = 'log-row';
+  row.innerHTML = `<span class="lt">${new Date().toLocaleTimeString()}</span><span class="${{i:'li',o:'lo',e:'le',w:'lw'}[t]||'li'}">${msg}</span>`;
+  box.appendChild(row);
+  box.scrollTop = box.scrollHeight;
+}
+
+// TOAST
+let _tt;
+function toast(msg, type='i') {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.className = type==='ok'?'ok':type==='err'?'err':'';
+  el.style.display = 'block';
+  clearTimeout(_tt);
+  _tt = setTimeout(() => el.style.display='none', 3000);
+}
+
+// INIT
+loadTheme();
+loadCreds();
+</script>
+</body>
+</html>
