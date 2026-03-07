@@ -311,6 +311,8 @@ select option{background:#1a0f18;color:#f0eaf0;}
           <select id="ai-provider" onchange="toggleAiProvider()">
             <option value="anthropic">Anthropic (Claude)</option>
             <option value="openai">OpenAI (ChatGPT)</option>
+            <option value="gemini">Google (Gemini)</option>
+            <option value="perplexity">Perplexity</option>
           </select>
         </div>
         <div class="field" id="anthropic-field">
@@ -322,6 +324,16 @@ select option{background:#1a0f18;color:#f0eaf0;}
           <label>OpenAI API Key</label>
           <input type="password" id="openai-key" placeholder="sk-••••••••••••••••"/>
           <div class="hint">Get yours at platform.openai.com → API Keys</div>
+        </div>
+        <div class="field" id="gemini-field" style="display:none">
+          <label>Gemini API Key</label>
+          <input type="password" id="gemini-key" placeholder="AIza••••••••••••••••"/>
+          <div class="hint">Get yours at aistudio.google.com → Get API Key (free)</div>
+        </div>
+        <div class="field" id="perplexity-field" style="display:none">
+          <label>Perplexity API Key</label>
+          <input type="password" id="perplexity-key" placeholder="pplx-••••••••••••••••"/>
+          <div class="hint">Get yours at perplexity.ai → Settings → API</div>
         </div>
       </div>
       <div class="card">
@@ -466,6 +478,8 @@ select option{background:#1a0f18;color:#f0eaf0;}
         <div class="card-label" style="margin-bottom:4px">🤖 <em>AI — optional</em></div>
         <div class="guide-step"><div class="guide-num">1</div><div class="guide-body"><h4>Anthropic (Claude)</h4><p>Sign up at <span class="guide-link" onclick="window.api.openExternal('https://console.anthropic.com')">console.anthropic.com</span> → <strong>API Keys</strong> → <strong>Create Key</strong>. Free credits on signup.</p></div></div>
         <div class="guide-step"><div class="guide-num">2</div><div class="guide-body"><h4>OpenAI (ChatGPT)</h4><p>Sign up at <span class="guide-link" onclick="window.api.openExternal('https://platform.openai.com')">platform.openai.com</span> → <strong>API Keys</strong> → <strong>Create new secret key</strong>. Add some credits to get started.</p></div></div>
+        <div class="guide-step"><div class="guide-num">3</div><div class="guide-body"><h4>Google Gemini</h4><p>Sign up at <span class="guide-link" onclick="window.api.openExternal('https://aistudio.google.com')">aistudio.google.com</span> → <strong>Get API Key</strong>. Free tier available.</p></div></div>
+        <div class="guide-step"><div class="guide-num">4</div><div class="guide-body"><h4>Perplexity</h4><p>Sign up at <span class="guide-link" onclick="window.api.openExternal('https://perplexity.ai')">perplexity.ai</span> → <strong>Settings</strong> → <strong>API</strong> → <strong>Generate</strong>. Add credits to get started.</p></div></div>
       </div>
     </div>
 
@@ -510,8 +524,10 @@ function nav(id) {
 // ─── CREDENTIALS ─────────────────────────────────
 function toggleAiProvider() {
   const p = document.getElementById('ai-provider').value;
-  document.getElementById('anthropic-field').style.display = p === 'anthropic' ? 'block' : 'none';
-  document.getElementById('openai-field').style.display = p === 'openai' ? 'block' : 'none';
+  document.getElementById('anthropic-field').style.display  = p === 'anthropic'   ? 'block' : 'none';
+  document.getElementById('openai-field').style.display     = p === 'openai'      ? 'block' : 'none';
+  document.getElementById('gemini-field').style.display     = p === 'gemini'      ? 'block' : 'none';
+  document.getElementById('perplexity-field').style.display = p === 'perplexity'  ? 'block' : 'none';
 }
 
 async function loadCreds() {
@@ -527,8 +543,10 @@ async function loadCreds() {
     document.getElementById('rd-user').value     = c.rdUser     || '';
     document.getElementById('rd-pass').value     = c.rdPass     || '';
     document.getElementById('rd-sub').value      = c.rdSub      || '';
-    document.getElementById('claude-key').value  = c.claudeKey  || '';
-    document.getElementById('openai-key').value  = c.openaiKey  || '';
+    document.getElementById('claude-key').value  = c.claudeKey     || '';
+    document.getElementById('openai-key').value  = c.openaiKey     || '';
+    document.getElementById('gemini-key').value  = c.geminiKey     || '';
+    document.getElementById('perplexity-key').value = c.perplexityKey || '';
     document.getElementById('ai-provider').value = c.aiProvider || 'anthropic';
     document.getElementById('compose-sub').value = c.rdSub      || '';
     toggleAiProvider();
@@ -546,9 +564,11 @@ async function saveCreds() {
     rdUser:     document.getElementById('rd-user').value.trim(),
     rdPass:     document.getElementById('rd-pass').value,
     rdSub:      document.getElementById('rd-sub').value.trim(),
-    aiProvider: document.getElementById('ai-provider').value,
-    claudeKey:  document.getElementById('claude-key').value.trim(),
-    openaiKey:  document.getElementById('openai-key').value.trim(),
+    aiProvider:    document.getElementById('ai-provider').value,
+    claudeKey:     document.getElementById('claude-key').value.trim(),
+    openaiKey:     document.getElementById('openai-key').value.trim(),
+    geminiKey:     document.getElementById('gemini-key').value.trim(),
+    perplexityKey: document.getElementById('perplexity-key').value.trim(),
   };
   await window.api.saveCreds(c);
   S.creds = { ...c, fieldMap: S.creds.fieldMap || {} };
@@ -565,7 +585,7 @@ async function clearAllCreds() {
   await window.api.clearCreds();
   S.creds = {};
   S.collectionFields = [];
-  ['wf-token','wf-collid','wf-baseurl','rd-clientid','rd-secret','rd-user','rd-pass','rd-sub','claude-key','openai-key']
+  ['wf-token','wf-collid','wf-baseurl','rd-clientid','rd-secret','rd-user','rd-pass','rd-sub','claude-key','openai-key','gemini-key','perplexity-key']
     .forEach(id => document.getElementById(id).value = '');
   document.getElementById('field-mapping-card').style.display = 'none';
   document.getElementById('field-mapping-body').innerHTML = '<div class="empty">Loading fields…</div>';
@@ -744,7 +764,7 @@ async function generateAll() {
   const pending = S.queue.filter(q => q.status === 'pending' || q.status === 'ready');
   if (!pending.length) { toast('No pending items to generate', 'err'); return; }
   const provider = S.creds.aiProvider || 'anthropic';
-  const apiKey = provider === 'openai' ? S.creds.openaiKey : S.creds.claudeKey;
+  const apiKey = provider === 'openai' ? S.creds.openaiKey : provider === 'gemini' ? S.creds.geminiKey : provider === 'perplexity' ? S.creds.perplexityKey : S.creds.claudeKey;
   if (!apiKey) { toast('No AI API key saved', 'err'); nav('credentials'); return; }
 
   const btn = document.getElementById('gen-all-btn');
@@ -844,7 +864,7 @@ function toggleImg(el, url) {
 async function generateSingle() {
   if (!S.selected) { toast('Select a CMS item first', 'err'); return; }
   const provider = S.creds.aiProvider || 'anthropic';
-  const apiKey = provider === 'openai' ? S.creds.openaiKey : S.creds.claudeKey;
+  const apiKey = provider === 'openai' ? S.creds.openaiKey : provider === 'gemini' ? S.creds.geminiKey : provider === 'perplexity' ? S.creds.perplexityKey : S.creds.claudeKey;
   if (!apiKey) { toast('No AI API key saved', 'err'); nav('credentials'); return; }
   const btn = document.getElementById('gen-btn');
   btn.innerHTML = '<span class="spinner"></span> Generating...';
